@@ -6,6 +6,7 @@ from . import views
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url("new/client", views.new_client, name="new_client"),
+    url("client_list", views.client_list, name="client_list"),
 ]
 
 if settings.DEBUG:

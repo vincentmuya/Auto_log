@@ -1,0 +1,65 @@
+{%extends 'base.html'%} {% load static %} {%block content%} {% load bootstrap5 %} {{ block.super}}
+<!DOCTYPE html>
+<html lang="en">
+<title>Auto Log</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'css/client.css' %}">
+</head>
+<body>
+
+    <div class="container">
+    <div id="card-content">
+      <div id="card-title">
+        <h2>Client List</h2>
+        <div class="underline-title"></div>
+      </div>
+
+
+          <div class="row">
+    <div class="col-md-1">
+    </div>
+  <div class="col-md-11">
+  <table id="clients">
+  <tr>
+  <th>Name</th>
+  <th>Phone Number</th>
+  <th>Item</th>
+  <th>Item Amount</th>
+  <th>Item collection date:</th>
+  </tr>
+          <!-- Looping through client   -->
+          {%  for single_client in client %}
+          <tr>
+            <td><a href="#">{{single_client.name}}</a></td>
+            <td>{{single_client.phone_number}}</td>
+            <td>{{single_client.item}}</td>
+            <td>{{single_client.item_amount}}</td>
+            <td>{{single_client.item_collection_date}}</td>
+            <td><a href="#"><button type="button" class="btn btn-info" name="button">Details</button></a></td>
+            <td><a href=""><button type="button" class="btn btn-success" name="button">Update</button></a></td>
+            <td><a href="#"><button type="button" class="btn btn-danger" name="button">Paid</button></a></td>
+
+          </tr>
+
+          {%endfor%}
+        <tr>
+  <th>Total</th>
+  <th></th>
+  <th></th>
+  <th></th>
+  <th>KSH{{total}}/=</th>
+  </tr>
+        </table>
+        </div>
+        </div>
+
+    </div>
+
+    </div>
+
+</body>
+</html>
+{%endblock%}

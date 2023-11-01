@@ -22,3 +22,8 @@ def new_client(request):
         form = NewClientForm()
 
     return render(request, 'new_client.html', {"form": form})
+
+
+def client_list(request):
+    client = Client.objects.filter(is_item_paid=False)[::-1]
+    return render(request, 'client.html', {'client': client})
