@@ -23,7 +23,7 @@ class Client(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('client_detail', args=[self.id, self.slug])
+        return reverse('client_detail', args=[self.slug])
 
     @classmethod
     def search_by_name(cls, search_term):

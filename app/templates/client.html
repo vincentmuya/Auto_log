@@ -33,12 +33,12 @@
           <!-- Looping through client   -->
           {%  for single_client in client %}
           <tr>
-            <td><a href="#">{{single_client.name}}</a></td>
+            <td><a href="{{ single_client.get_absolute_url }}">{{single_client.name}}</a></td>
             <td>{{single_client.phone_number}}</td>
             <td>{{single_client.item}}</td>
             <td>{{single_client.item_amount}}</td>
             <td>{{single_client.item_collection_date}}</td>
-            <td><a href="#"><button type="button" class="btn btn-info" name="button">Details</button></a></td>
+            <td><a href="{{ single_client.get_absolute_url }}"><button type="button" class="btn btn-info" name="button">Details</button></a></td>
             <td><a href=""><button type="button" class="btn btn-success" name="button">Update</button></a></td>
             <td><a href="#"><button type="button" class="btn btn-danger" name="button">Paid</button></a></td>
 

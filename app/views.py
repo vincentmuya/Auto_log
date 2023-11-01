@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .forms import NewClientForm
 from django.http import HttpResponseRedirect
 from .models import Client
@@ -27,3 +27,8 @@ def new_client(request):
 def client_list(request):
     client = Client.objects.filter(is_item_paid=False)[::-1]
     return render(request, 'client.html', {'client': client})
+
+
+def client_detail(request, slug, ):
+    client = get_object_or_404(Client, slug=slug)
+    return render(request, 'client_detail.html', {'client': client})

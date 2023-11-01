@@ -1,0 +1,89 @@
+h2 {
+    text-align: center;
+}
+.titlebold{
+font-weight: 0;
+font-size: 15px;
+}
+.panel{
+width: 80%;
+}
+.track-card{
+width: 40rem;
+}
+#customers {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#customers td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  width: 110px;
+  font-size: 15px
+}
+
+#customers tr:nth-child(even){background-color: #f2f2f2;}
+
+#customers tr:hover {background-color: #ddd;}
+#customers th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
+.credentials{
+background-color: #f2f2f2;
+border-radius: 10px;
+box-shadow: 2px 2px 2px 2px;
+width: 90%;
+padding: 10px;
+}
+.credentials h1{
+font-size: 40px;
+}
+footer{
+    background-color: #4a4a4a;
+}
+.row{
+margin-left: 0px;
+margin-right: 0px;
+}
+b, strong {
+font-weight: 600;
+}
+.underline-title {
+  background: -webkit-linear-gradient(right, #a6f77b, #2ec06f);
+  height: 2px;
+  margin: -1.1rem auto 0 auto;
+  width: 200px;
+}
+@media screen and (max-width: 650px) {
+.track-card{
+  width: 21rem;
+}
+.panel{
+  margin-bottom: 0px;
+  width: 100%;
+}
+.titlebold{
+  font-weight: 900;
+  font-size: 15px;
+}
+#customers{
+  width: 300px;
+}
+
+.credentials{
+  margin-bottom: 15px;
+}
+.credentials h1 {
+    font-size: 15px;
+}
+body{
+  padding-top: 17%;
+  margin-bottom: 200px;
+}
+}
