@@ -32,3 +32,12 @@ def client_list(request):
 def client_detail(request, slug, ):
     client = get_object_or_404(Client, slug=slug)
     return render(request, 'client_detail.html', {'client': client})
+
+
+def update_client(request, pk):
+    instance = get_object_or_404(Client, pk=pk)
+    form = NewClientForm(request.POST or None, instance=instance)
+    if form.is_valid():
+        form.save()
+        return HttpResponseRedirect('/')
+    return render(request, 'update_client.html', {'form': form})

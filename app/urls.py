@@ -8,6 +8,7 @@ urlpatterns = [
     url("new/client", views.new_client, name="new_client"),
     url("client_list", views.client_list, name="client_list"),
     url(r'^(?P<slug>[-\w]+)/$', views.client_detail, name='client_detail'),
+    url(r'^update/client/(?P<pk>\d+)/$', views.update_client, name='update-client'),
 
 ]
 

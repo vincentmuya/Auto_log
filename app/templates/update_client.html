@@ -1,0 +1,30 @@
+{%extends 'base.html'%} {% load static %} {%block content%} {% load bootstrap5 %} {{ block.super}}
+<!DOCTYPE html>
+<html lang="en">
+<title>Auto Log</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'css/update_client.css' %}">
+</head>
+<body>
+
+    <div class="container">
+     <div id="card">
+        <div id="card-content">
+          <div id="card-title">
+            <h2>Update Client</h2>
+            <div class="underline-title"></div>
+          </div>
+          <form method="post">
+                  {% csrf_token %}
+                  {% bootstrap_form form %}
+             <input id="submit-btn" type="submit" name="Update" />
+          </form>
+        </div>
+      </div>
+    </div>
+</body>
+</html>
+{%endblock%}
