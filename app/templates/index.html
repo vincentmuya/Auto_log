@@ -80,15 +80,14 @@
         <h4 class="card-title" style="text-align:center;">Monthly Record.</h4>
 
     <div class="row">
-      {% for loan in total_loan_amount_users.monthly_loan_balance %}
+      {% for item in total_item_amount_users.monthly_item_balance %}
   <div class="col-sm-6">
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title">{{ loan.year_month|date:"F" }}.</h4>
-        <p class="card-text">Loans given: KSH{{ loan.total_balance|intcomma }}/=.</p>
-        <p class="card-text">Paid Loans: KSH{{ total_loan_amount_users.paid_loans_amount|intcomma }}/=.</p>
-        <p class="card-text">Unpaid Loan Balance: KSH{{ total_loan_amount_users.unpaid_loan_balance|intcomma }}/=.</p>
-        <p class="card-text">Total Profit: KSH{{ total_loan_amount_users.total_profit|intcomma }}/=.</p>
+        <h4 class="card-title">{{ item.year_month|date:"F" }}.</h4>
+        <p class="card-text">Item Amount Given: KSH{{ item.total_balance|intcomma }}/=.</p>
+        <p class="card-text">Paid Loans: KSH{{ total_item_amount_users.paid_items_amount|intcomma }}/=.</p>
+        <p class="card-text">Unpaid Loan Balance: KSH{{ total_item_amount_users.unpaid_item_balance|intcomma }}/=.</p>
       </div>
     </div>
   </div>
