@@ -29,3 +29,30 @@ class Client(models.Model):
     def search_by_name(cls, search_term):
         search_result = cls.objects.filter(name__exact=search_term)
         return search_result
+
+
+class ItemHistory(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50, null=True, blank=True)
+    phone_number = models.IntegerField(null=True, blank=True)
+    item = models.CharField(max_length=50, null=True, blank=True)
+    date_paid = models.DateField(auto_now_add=True)
+    item_collection_date = models.DateField(null=True, blank=True)
+    item_amount = models.IntegerField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        # Copy item_collection_date and item_amount from the client when saving a new record in ItemHistory
+        if not self.name:
+            self.name = self.client.name
+        if not self.phone_number:
+            self.phone_number = self.client.phone_number
+        if not self.item_collection_date:
+            self.item_collection_date = self.client.item_collection_date
+        if not self.item_amount:
+            self.item_amount = self.client.item_amount
+        if not self.item:
+            self.item = self.client.item
+        super(ItemHistory, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.client.name} - Paid on: {self.date_paid}"
