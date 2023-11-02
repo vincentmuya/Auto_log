@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, HttpResponse, get_list_or_404
 from .forms import NewClientForm
 from django.http import HttpResponseRedirect
-from .models import Client, ItemHistory
+from .models import Client, ItemHistory, Profile
 from django.contrib.humanize.templatetags.humanize import intcomma
 
 
@@ -50,7 +50,8 @@ def client_detail(request, slug, ):
 
     for clients in history:
         clients.item_amount = intcomma(clients.item_amount)
-    return render(request, 'client_detail.html', {'client': client, 'history': history, 'history_names': history_names, 'clients_with_item': clients_with_item, 'all_item_paid': all_item_paid})
+    return render(request, 'client_detail.html', {'client': client, 'history': history,
+                                                  'history_names': history_names, 'clients_with_item': clients_with_item, 'all_item_paid': all_item_paid})
 
 
 def update_client(request, pk):
@@ -87,3 +88,17 @@ def item_paid(request,  slug):
     ItemHistory.objects.create(client=client)
 
     return HttpResponse("item Paid Successfully!")
+
+
+def profile(request, username):
+    user_profile = Profile.objects.filter(user_id=request.user.id)[::-1]
+    lender_list = Client.objects.filter(lender_id=request.user).order_by('item_collection_date')[::-1]
+    unpaid_clients = Client.objects.filter(lender_id=request.user, is_item_paid=False)
+    total_unpaid_balance = sum(client.item_amount for client in unpaid_clients)
+    client = Client.objects.all()
+
+    # Format the item_amount fields with commas
+    for client in lender_list:
+        client.item_amount = intcomma(client.item_amount)
+    return render(request, "profile.html", {"user_profile": user_profile, "lender_list": lender_list,
+                                            "total_unpaid_balance": intcomma(total_unpaid_balance)})

@@ -1,0 +1,73 @@
+{%extends 'base.html'%} {% load static %} {%block content%} {% load bootstrap5 %} {{ block.super}}
+<!DOCTYPE html>
+<html lang="en">
+<title>Auto Log</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+</head>
+
+<body>
+<div class="container">
+      {%for profile_item in user_profile%}
+        <div id="card-content">
+        <div id="card-title">
+        <h2>Logged In As {{profile_item.user}}</h2>
+        <div class="underline-title"></div>
+        <br>
+          <h4>Items Given By {{profile_item.user}}</h4>
+        <div class="underline-title"></div>
+        </div>
+      {%endfor%}
+
+
+            <div class="row">
+    <div class="col-md-1">
+    </div>
+  <div class="col-md-11">
+  <table id="clients">
+  <tr>
+  <th>Name</th>
+  <th>Phone Number</th>
+  <th>Item</th>
+  <th>Item Amount</th>
+  <th>Item Collection Date</th>
+  </tr>
+          <!-- Looping through lender_listlender_list   -->
+      {%for post_item in lender_list%}
+          <tr>
+            <td><a href="{{ post_item.get_absolute_url }}">{{post_item.name}}<a/></td>
+            <td>{{post_item.phone_number}}</td>
+            <td>{{post_item.item}}</td>
+            <td>KSH{{post_item.item_amount}}/=</td>
+            <td>{{post_item.item_collection_date}}</td>
+            {%if post_item.is_item_paid %}
+        <td><button type="button" class="btn btn-light" name="button">Paid</button></td>
+        <td><a href="{{ post_item.get_absolute_url }}"><button type="button" class="btn btn-primary" name="button"> Details</button></a></td>
+      {% else %}
+        <td><a href="{{ post_item.get_absolute_url }}"><button type="button" class="btn btn-info" name="button">Details</button></a></td>
+        <td><a href="{% url 'update-client' post_item.pk %}"><button type="button" class="btn btn-success" name="button">Update</button></a></td>
+        <td><a href="{% url 'item_paid' post_item.slug  %}"><button type="button" class="btn btn-danger" name="button">Paid</button></a></td>
+        {% endif %}
+          </tr>
+    {%endfor%}
+        <tr>
+  <th>Total Unpaid</th>
+  <th></th>
+  <th></th>
+  <th></th>
+  <th>KSH{{ total_unpaid_balance }}/=</th>
+  </tr>
+        </table>
+        </div>
+        </div>
+</div>
+</div>
+
+
+
+</body>
+</html>
+{%endblock%}
