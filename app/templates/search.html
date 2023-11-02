@@ -1,0 +1,52 @@
+{%extends 'base.html'%} {% load static %} {%block content%} {% load bootstrap5 %} {{ block.super}}
+<!DOCTYPE html>
+<html lang="en">
+<title>Auto Log</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'css/search.css' %}">
+</head>
+
+<body>
+<div class="container">
+<h2>Search Results</h2>
+<div class="underline-title"></div>
+<div class="card text-center">
+  <div class="card-header">
+      {% if name %}
+    Found {{ name|length }} of searched term {{message}}
+  </div>
+    {% for result in name%}
+  <div class="card-body">
+    <h5 class="card-title">Name:<a href="{{ result.get_absolute_url }}">{{result.name}}</a></h5>
+      <strong><p class="card-text">Phone Number:{{result.phone_number}}</p><strong/>
+    <strong><p class="card-text">Item:{{result.item}}</p><strong/>
+      <strong><p class="card-text">Loan Amount:KSH{{result.item_amount}}/=</p><strong/>
+
+
+      {%if result.is_loan_paid %}
+      <button type="button" class="btn btn-light" name="button">Paid</button>
+      <a href="{{ result.get_absolute_url }}"><button type="button" class="btn btn-primary" name="button"> Details</button></a>
+            {% else %}
+
+      <a href="{{ result.get_absolute_url }}"><button type="button" class="btn btn-info" name="button">Details</button></a>
+        <a href="{% url 'update-client' result.pk %}"><button type="button" class="btn btn-success" name="button">Update</button></a>
+        <a href=""><button type="button" class="btn btn-danger" name="button">Paid</button></a>
+      {% endif %}
+  </div>
+     {% endfor %}
+  <div class="card-footer text-muted">
+
+  </div>
+</div>
+{% else %}
+<h2>No Results of searched term {{message}}</h2>
+{% endif %}
+</div>
+
+</body>
+</html>
+
+  {% endblock %}

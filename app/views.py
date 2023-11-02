@@ -41,3 +41,11 @@ def update_client(request, pk):
         form.save()
         return HttpResponseRedirect('/')
     return render(request, 'update_client.html', {'form': form})
+
+
+def search_results(request):
+    if 'name' in request.GET and request.GET["name"]:
+        search_term = request.GET.get("name")
+        searched_ref = Client.search_by_name(search_term)
+        message = f"{search_term}"
+        return render(request, "search.html", {"message": message, "name": searched_ref})
