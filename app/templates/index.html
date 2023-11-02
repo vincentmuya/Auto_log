@@ -27,7 +27,7 @@
         <p class="card-text">KSH{{total_by_user}}/=</p>
           <h4 class="card-title">Items Amount This Month.</h4>
         <p class="card-text">KSH:{{total_item_amount}}/=</p>
-        <a href="{%url 'profile' user.username%}" class="btn btn-primary">View Loans</a>
+        <a href="{%url 'profile' user.username%}" class="btn btn-primary">View Profile</a>
       </div>
     </div>
   </div>
@@ -67,7 +67,7 @@
         <hr>
       <a href="{%url 'new_client'%}" class="btn btn-info">Add Client</a>
         {% if user.is_authenticated and user.is_superuser %}
-        <a href="" class="btn btn-warning">Add User</a>
+        <a href="{%url 'register'%}" class="btn btn-warning">Add User</a>
         <a href="" class="btn btn-danger">View Users</a>
         {% endif %}
       </div>

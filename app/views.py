@@ -1,14 +1,19 @@
-from django.shortcuts import render, get_object_or_404, HttpResponse, get_list_or_404
-from .forms import NewClientForm
+from django.shortcuts import render, get_object_or_404, HttpResponse, get_list_or_404, redirect
+from .forms import NewClientForm, NewUserForm
 from django.http import HttpResponseRedirect
 from .models import Client, ItemHistory, Profile
 from django.contrib.humanize.templatetags.humanize import intcomma
 from datetime import datetime
 from django.db.models import Count, Sum, F
 from django.db.models.functions import TruncMonth
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login, authenticate, logout
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
+@login_required(login_url='/accounts/login')
 def index(request):
     items_by_user = Client.objects.filter(lender_id=request.user)
     total_by_user = sum(client.item_amount for client in items_by_user)
@@ -25,6 +30,7 @@ def index(request):
     return render(request, "index.html", {'total_unpaid_balance': intcomma(total_unpaid_balance), 'total_by_user': intcomma(total_by_user), 'unpaid_items_by_user': unpaid_items_by_user, 'paid_items_by_user': paid_items_by_user, 'items_number_by_user': items_number_by_user, 'total_item_amount': intcomma(total_item_amount), 'total_paid_balance': intcomma(total_paid_balance), 'total_item_amount_users': total_item_amount_users})
 
 
+@login_required(login_url='/accounts/login')
 def new_client(request):
     current_user = request.user
     if request.method == 'POST':
@@ -39,6 +45,7 @@ def new_client(request):
     return render(request, 'new_client.html', {"form": form})
 
 
+@login_required(login_url='/accounts/login')
 def client_list(request):
     client = Client.objects.filter(is_item_paid=False)[::-1]
     for clients in client:
@@ -46,6 +53,7 @@ def client_list(request):
     return render(request, 'client.html', {'client': client})
 
 
+@login_required(login_url='/accounts/login')
 def client_detail(request, slug, ):
     client = get_object_or_404(Client, slug=slug)
     history = ItemHistory.objects.filter(name=client.name)  # Get item history for the client's name
@@ -68,6 +76,7 @@ def client_detail(request, slug, ):
                                                   'history_names': history_names, 'clients_with_item': clients_with_item, 'all_item_paid': all_item_paid})
 
 
+@login_required(login_url='/accounts/login')
 def update_client(request, pk):
     instance = get_object_or_404(Client, pk=pk)
     form = NewClientForm(request.POST or None, instance=instance)
@@ -77,6 +86,7 @@ def update_client(request, pk):
     return render(request, 'update_client.html', {'form': form})
 
 
+@login_required(login_url='/accounts/login')
 def search_results(request):
     if 'name' in request.GET and request.GET["name"]:
         search_term = request.GET.get("name")
@@ -104,6 +114,7 @@ def item_paid(request,  slug):
     return HttpResponse("item Paid Successfully!")
 
 
+@login_required(login_url='/accounts/login')
 def profile(request, username):
     user_profile = Profile.objects.filter(user_id=request.user.id)[::-1]
     lender_list = Client.objects.filter(lender_id=request.user).order_by('item_collection_date')[::-1]
@@ -158,3 +169,35 @@ def monthly_item_stats(request):
         'unpaid_item_balance': unpaid_item_balance,
     }
     return context
+
+
+def login_request(request):
+    if request.method == "POST":
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                messages.info(request, f"You are now logged in as {username}.")
+                return redirect("/")
+            else:
+                messages.error(request, "Invalid username or password.")
+        else:
+            messages.error(request, "Invalid username or password.")
+    form = AuthenticationForm()
+    return render(request, 'registration/login.html', {'form': form})
+
+
+def register_request(request):
+    if request.method == "POST":
+        form = NewUserForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, "Registration successful." )
+            return redirect("/home")
+        messages.error(request, "Unsuccessful registration. Invalid information.")
+    form = NewUserForm()
+    return render(request, 'registration/register.html', {'form': form})
