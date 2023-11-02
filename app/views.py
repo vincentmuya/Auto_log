@@ -3,12 +3,26 @@ from .forms import NewClientForm
 from django.http import HttpResponseRedirect
 from .models import Client, ItemHistory, Profile
 from django.contrib.humanize.templatetags.humanize import intcomma
+from datetime import datetime
+from django.db.models import Count, Sum, F
+from django.db.models.functions import TruncMonth
 
 
 # Create your views here.
 def index(request):
+    items_by_user = Client.objects.filter(lender_id=request.user)
+    total_by_user = sum(client.item_amount for client in items_by_user)
+    unpaid_clients = Client.objects.filter(lender_id=request.user, is_item_paid=False)
+    paid_clients = Client.objects.filter(lender_id=request.user, is_item_paid=True)
+    total_paid_balance = sum(client.item_amount for client in paid_clients)
+    total_unpaid_balance = sum(client.item_amount for client in unpaid_clients)
+    items_number_by_user = Client.objects.filter(lender_id=request.user).count
+    unpaid_items_by_user = Client.objects.filter(lender_id=request.user, is_item_paid=False).count
+    paid_items_by_user = Client.objects.filter(lender_id=request.user, is_item_paid=True).count
+    total_item_amount = current_month_items_amount(request)
+    total_item_amount_users = monthly_item_stats(request)
 
-    return render(request, "index.html")
+    return render(request, "index.html", {'total_unpaid_balance': intcomma(total_unpaid_balance), 'total_by_user': intcomma(total_by_user), 'unpaid_items_by_user': unpaid_items_by_user, 'paid_items_by_user': paid_items_by_user, 'items_number_by_user': items_number_by_user, 'total_item_amount': intcomma(total_item_amount), 'total_paid_balance': intcomma(total_paid_balance), 'total_item_amount_users': total_item_amount_users})
 
 
 def new_client(request):
@@ -102,3 +116,45 @@ def profile(request, username):
         client.item_amount = intcomma(client.item_amount)
     return render(request, "profile.html", {"user_profile": user_profile, "lender_list": lender_list,
                                             "total_unpaid_balance": intcomma(total_unpaid_balance)})
+
+
+def current_month_items_amount(request):
+    # Get the current date
+    today = datetime.now()
+
+    # Filter items for the current month
+    items_this_month = Client.objects.filter(item_collection_date__month=today.month, item_collection_date__year=today.year)
+
+    # Calculate the sum of item amounts
+    total_item_amount_monthly = items_this_month.aggregate(Sum('item_amount'))['item_amount__sum']
+
+    if total_item_amount_monthly is None:
+        total_item_amount_monthly = 0
+
+    return total_item_amount_monthly
+
+
+def monthly_item_stats(request):
+    # Calculate total item balance given monthly
+    monthly_item_balance = Client.objects.annotate(
+        year_month=TruncMonth('item_collection_date')
+    ).values('year_month').annotate(
+        total_balance=Sum('item_amount')
+    )
+
+    # Calculate paid items amount
+    paid_items_amount = Client.objects.filter(is_item_paid=True).aggregate(
+        total_paid=Sum('item_amount')
+    )['total_paid']
+
+    # Calculate unpaid items balance
+    unpaid_item_balance = Client.objects.filter(is_item_paid=False).aggregate(
+        total_unpaid_balance=Sum('item_amount')
+    )['total_unpaid_balance']
+
+    context = {
+        'monthly_item_balance': monthly_item_balance,
+        'paid_items_amount': paid_items_amount,
+        'unpaid_item_balance': unpaid_item_balance,
+    }
+    return context

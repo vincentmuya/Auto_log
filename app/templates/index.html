@@ -1,15 +1,101 @@
-{%extends 'base.html'%} {% load static %} {%block content%} {% load bootstrap5 %} {{ block.super}}
+{%extends 'base.html'%} {% load static %} {%block content%} {% load bootstrap5 %} {{ block.super}} {% load humanize %}
 
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
     <link rel="icon" href="/static/images/" type="image/gif" sizes="50x50">
+  <link rel="stylesheet" href="{% static 'css/index.css' %}">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Auto Log</title>
 </head>
 
 <body>
+
+<div class="container">
+<h1>Welcome</h1>
+<h1>{{user.username}}</h1>
+  <div class="underline-title"></div>
+  <div class="space"></div>
+
+<!--Cards-->
+<div class="row">
+  <div class="col-sm-6">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Items Amount By {{user.username}}.</h4>
+        <p class="card-text">KSH{{total_by_user}}/=</p>
+          <h4 class="card-title">Items Amount This Month.</h4>
+        <p class="card-text">KSH:{{total_item_amount}}/=</p>
+        <a href="{%url 'profile' user.username%}" class="btn btn-primary">View Loans</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Paid Items Amount.</h4>
+        <p class="card-text">KSH{{ total_paid_balance }}/=</p>
+        <h4 class="card-title">Unpaid Items Amount.</h4>
+        <p class="card-text">KSH{{ total_unpaid_balance }}/=</p>
+        <a href="{%url 'client_list' %}" class="btn btn-primary">View Clients</a>
+      </div>
+    </div>
+  </div>
+<div class="space"></div>
+</div>
+  <div class="row">
+  <div class="col-sm-6">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Items Status.</h4>
+        <p class="card-text">Items Given:{{items_number_by_user}}.</p>
+        <p class="card-text">Items Paid:{{paid_items_by_user}}.</p>
+        <p class="card-text">Items Unpaid:{{unpaid_items_by_user}}.</p>
+        <a href="{%url 'profile' user.username%}" class="btn btn-primary">View</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Search Client Using ID Number.</h4>
+    <form class="form-inline my-2 my-lg-0" role="search" action="{% url 'search_results' %}">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" class="form-control" name="name" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+        <hr>
+      <a href="{%url 'new_client'%}" class="btn btn-info">Add Client</a>
+        {% if user.is_authenticated and user.is_superuser %}
+        <a href="" class="btn btn-warning">Add User</a>
+        <a href="" class="btn btn-danger">View Users</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+  <div class="space"></div>
+          {% if user.is_authenticated and user.is_superuser %}
+
+        <h4 class="card-title" style="text-align:center;">Monthly Record.</h4>
+
+    <div class="row">
+      {% for loan in total_loan_amount_users.monthly_loan_balance %}
+  <div class="col-sm-6">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">{{ loan.year_month|date:"F" }}.</h4>
+        <p class="card-text">Loans given: KSH{{ loan.total_balance|intcomma }}/=.</p>
+        <p class="card-text">Paid Loans: KSH{{ total_loan_amount_users.paid_loans_amount|intcomma }}/=.</p>
+        <p class="card-text">Unpaid Loan Balance: KSH{{ total_loan_amount_users.unpaid_loan_balance|intcomma }}/=.</p>
+        <p class="card-text">Total Profit: KSH{{ total_loan_amount_users.total_profit|intcomma }}/=.</p>
+      </div>
+    </div>
+  </div>
+              {% endfor %}
+</div>
+{% endif %}
+</div>
 
 </body>
 </html>
