@@ -10,6 +10,7 @@ urlpatterns = [
     url(r'^(?P<slug>[-\w]+)/$', views.client_detail, name='client_detail'),
     url(r'^update/client/(?P<pk>\d+)/$', views.update_client, name='update-client'),
     url(r'^search$', views.search_results, name='search_results'),
+    url('item_paid/(?P<slug>[-\w]+)/$', views.item_paid, name='item_paid'),
 
 ]
 

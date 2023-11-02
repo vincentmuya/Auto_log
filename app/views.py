@@ -70,8 +70,8 @@ def search_results(request):
         return render(request, "search.html", {"message": message, "name": searched_ref})
 
 
-def item_paid(request,  name):
-    client = get_list_or_404(Client, name=name)
+def item_paid(request,  slug):
+    client = get_list_or_404(Client, slug=slug)
     if len(client) > 1:
         # If multiple clients found, choose the first one and save it
         client = client[0]

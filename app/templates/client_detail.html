@@ -41,7 +41,6 @@
     <div class="col-md-6">
       <div class="credentials">
         <h3 class="titlebold"><strong>Phone Number:{{ client.phone_number }} </strong></h3>
-        <h3 class="titlebold"><strong>Residence:{{ client.Residence }} </strong></h3>
       </div>
     </div>
     </div>
@@ -86,38 +85,30 @@
     {% elif client.name in history_names or client.name in clients_with_item and client.is_item_paid %}
     <table id="customers">
     <tr>
-      <td><strong>Loan Amount:KSH{{ client.item_amount }}/= </strong><br></td>
-      <td><strong>Loan Interest:{{ client.item }}% </strong><br></td>
+      <td><strong>Item:{{ client.item }}1 </strong><br></td>
+      <td><strong>Item Amount:KSH{{ client.item_amount }}/= </strong><br></td>
     </tr>
     <tr>
-      <td><strong>Loan Collection Date:{{ client.item_collection_date }} </strong><br></td>
-      <td><strong>Loan Penalty:KSH{{ client.loan_penalty }}/= </strong><br></td>
-    </tr>
-    <tr>
-      <td><strong>Loan Balance:KSH{{ client.loan_balance }}/= </strong></td>
+      <td><strong>item Collection Date:{{ client.item_collection_date }} </strong><br></td>
     </tr>
     <tr>
       <td ><strong><a href="{% url 'update-client' client.pk %}"><button type="button" class="btn btn-success" name="button">Update{{ client.name }}'s Details </button></a></strong></td>
-          <td><a href="{% url 'loan_paid' client.id_number  %}"><button type="button" class="btn btn-danger" name="button">Paid</button></a></td>
+          <td><a href="{% url 'item_paid' client.slug  %}"><button type="button" class="btn btn-danger" name="button">Paid</button></a></td>
 
     </tr>
     </table>
-      <h4>Loan History</h4>
+      <h4>Item History</h4>
 
     <table id="customers">
         {% for item in history %}
                 <tr>
-            <td><strong>Loan Amount:KSH{{ item.item_amount }}/= </strong><br></td>
-            <td><strong>Loan Interest:{{ item.item }}</strong><br></td>
+            <td><strong>Item:{{ item.item }}2</strong><br></td>
+            <td><strong>Item Amount:KSH{{ item.item_amount }}/= </strong><br></td>
         </tr>
         <tr>
-            <td><strong>Loan Collection Date:{{ item.item_collection_date }} </strong><br></td>
-            <td><strong>Loan Date Paid:{{ loan.date_paid }} </strong><br></td>
+            <td><strong>Item Collection Date:{{ item.item_collection_date }} </strong><br></td>
+            <td><strong>Item Date Paid:{{ item.date_paid }} </strong><br></td>
             </tr>
-        <tr>
-            <td><strong>Loan Penalty:KSH{{ loan.loan_penalty }}/= </strong><br></td>
-            <td style="color:red;"><strong>Amount Paid:KSH{{ loan.loan_balance }}/= </strong><br></td>
-        </tr>
         {% endfor %}
     </table>
 
@@ -128,15 +119,11 @@
       <td><strong>Item Amount:KSH{{ client.item_amount }}/= </strong><br></td>
     </tr>
     <tr>
-      <td><strong>Loan Collection Date:{{ client.item_collection_date }} </strong><br></td>
-      <td><strong>Loan Penalty:KSH{{ client.loan_penalty }}/= </strong><br></td>
-    </tr>
-    <tr>
-      <td><strong>Loan Balance:KSH{{ client.loan_balance }}/= </strong></td>
+      <td><strong>Item Collection Date:{{ client.item_collection_date }} </strong><br></td>
     </tr>
     <tr>
       <td ><strong><a href="{% url 'update-client' client.pk %}"><button type="button" class="btn btn-success" name="button">Update{{ client.name }}'s Details </button></a></strong></td>
-          <td><a href=""><button type="button" class="btn btn-danger" name="button">Paid</button></a></td>
+          <td><a href="{% url 'item_paid' client.slug  %}"><button type="button" class="btn btn-danger" name="button">Paid</button></a></td>
 
     </tr>
     </table>

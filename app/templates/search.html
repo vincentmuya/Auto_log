@@ -33,7 +33,7 @@
 
       <a href="{{ result.get_absolute_url }}"><button type="button" class="btn btn-info" name="button">Details</button></a>
         <a href="{% url 'update-client' result.pk %}"><button type="button" class="btn btn-success" name="button">Update</button></a>
-        <a href=""><button type="button" class="btn btn-danger" name="button">Paid</button></a>
+        <a href="{% url 'item_paid' result.slug  %}"><button type="button" class="btn btn-danger" name="button">Paid</button></a>
       {% endif %}
   </div>
      {% endfor %}
