@@ -1,0 +1,62 @@
+{%extends 'base.html'%} {% load static %} {%block content%} {% load bootstrap5 %} {{ block.super}}
+<!DOCTYPE html>
+<html lang="en">
+<title>Auto Log</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'css/users.css' %}">
+</head>
+<body>
+
+    <div class="container">
+    <div id="card-content">
+      <div id="card-title">
+        <h2>Users List</h2>
+        <div class="underline-title"></div>
+      </div>
+
+
+          <div class="row">
+    <div class="col-md-1">
+    </div>
+  <div class="col-md-11">
+  <table id="clients">
+  <tr>
+  <th>Name</th>
+  <th>Items Given</th>
+  <th>Items Paid</th>
+  <th>Items Unpaid</th>
+  </tr>
+          <!-- Looping through Users   -->
+{% for stats in user_stats %}
+<tr>
+    <td><a href="">{{ stats.user }}</a></td>
+    <td>KSH{{ stats.total_items_given }}/=</td>
+    <td>KSH{{ stats.total_paid_items }}/=</td>
+    <td>KSH{{ stats.total_unpaid_items }}/=</td>
+    <td><a href="">
+        <button type="button" class="btn btn-info" name="button">Details</button>
+        </a>
+    </td>
+</tr>
+{% endfor %}
+        <tr>
+  <th></th>
+  <th></th>
+  <th></th>
+  <th></th>
+  <th></th>
+  </tr>
+        </table>
+        </div>
+        </div>
+
+    </div>
+
+    </div>
+
+</body>
+</html>
+{%endblock%}

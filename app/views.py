@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, HttpResponse, get_list_or_404, redirect
 from .forms import NewClientForm, NewUserForm
 from django.http import HttpResponseRedirect
-from .models import Client, ItemHistory, Profile
+from .models import Client, ItemHistory, Profile, User
 from django.contrib.humanize.templatetags.humanize import intcomma
 from datetime import datetime
 from django.db.models import Count, Sum, F
@@ -201,3 +201,27 @@ def register_request(request):
         messages.error(request, "Unsuccessful registration. Invalid information.")
     form = NewUserForm()
     return render(request, 'registration/register.html', {'form': form})
+
+
+def registered_users(request):
+    users_in_db = User.objects.all()
+
+    user_stats = []
+
+    for user in users_in_db:
+        items_given = Client.objects.filter(lender=user)
+        total_items_given = sum(client.item_amount for client in items_given)
+        paid_items = items_given.filter(is_item_paid=True)
+        paid_items = sum(client.item_amount for client in paid_items)
+        unpaid_items = items_given.filter(is_item_paid=False)
+        unpaid_items = sum(client.item_amount for client in unpaid_items)
+
+        user_stat = {
+            'user': user,
+            'total_items_given': intcomma(total_items_given),
+            'total_paid_items': intcomma(paid_items),
+            'total_unpaid_items': intcomma(unpaid_items),
+            'user_id': user.id,  # Add the user's ID to the dictionary
+        }
+        user_stats.append(user_stat)
+    return render(request, "users.html", {"users_in_db": users_in_db, 'user_stats': user_stats})

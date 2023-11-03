@@ -59,7 +59,7 @@
   <div class="col-sm-6">
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title">Search Client Using ID Number.</h4>
+        <h4 class="card-title">Search Client Using Name.</h4>
     <form class="form-inline my-2 my-lg-0" role="search" action="{% url 'search_results' %}">
       <input class="form-control mr-sm-2" type="search" placeholder="Search" class="form-control" name="name" aria-label="Search">
       <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
@@ -68,7 +68,7 @@
       <a href="{%url 'new_client'%}" class="btn btn-info">Add Client</a>
         {% if user.is_authenticated and user.is_superuser %}
         <a href="{%url 'register'%}" class="btn btn-warning">Add User</a>
-        <a href="" class="btn btn-danger">View Users</a>
+        <a href="{%url 'registered_users'%}" class="btn btn-danger">View Users</a>
         {% endif %}
       </div>
     </div>
