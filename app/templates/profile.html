@@ -11,17 +11,18 @@
 
 <body>
 <div class="container">
-      {%for profile_item in user_profile%}
+      {%for profile in user_profile%}
         <div id="card-content">
         <div id="card-title">
-        <h2>Logged In As {{profile_item.user}}</h2>
+        <h2>Logged In As {{profile.user}}</h2>
         <div class="underline-title"></div>
         <br>
-          <h4>Items Given By {{profile_item.user}}</h4>
+          <h4>Items Given By {{profile.user}}</h4>
         <div class="underline-title"></div>
         </div>
       {%endfor%}
-
+          <h2>Profile:Items Given</h2>
+            <div class="underline-title"></div>
 
             <div class="row">
     <div class="col-md-1">

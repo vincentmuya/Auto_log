@@ -1,0 +1,77 @@
+{%extends 'base.html'%} {% load static %} {%block content%} {% load bootstrap5 %} {{ block.super}} {% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+<title>Auto Log</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'css/user_detail.css' %}">
+</head>
+<body>
+
+    <div class="container">
+          <div id="card-title">
+          <h2>User Details</h2>
+            <div class="underline-title"></div>
+      </div>
+              <div class="row">
+        <div class="col-md-1">
+    <h1></h1>
+        </div>
+        <div class="col-md-10">
+    <div class="panel panel-default">
+      <div class="row">
+        <div class="col-md-1">
+        </div>
+        <div class="col-md-10">
+      <div class="titlebold"><strong></strong>
+      <br>
+  <div class="track-card" >
+    <br>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="credentials">
+        <h3 class="titlebold"><strong>Name:{{ user_info.username }}</strong> </h3>
+        <h3 class="titlebold"><strong>Items Given:KSH {{ total_items_given }}/= </strong></h3>
+
+      </div>
+      </div>
+
+    <div class="col-md-6">
+      <div class="credentials">
+        <h3 class="titlebold"><strong>Items Paid:KSH {{ total_paid_amount }}/= </strong></h3>
+        <h3 class="titlebold"><strong>Items Unpaid:KSH {{ total_unpaid_amount }}/= </strong></h3>
+      </div>
+    </div>
+    </div>
+    <br>
+    <h4>Items History Monthly</h4>
+    <table id="customers">
+    {% for entry in items_given_monthly %}
+        <tr>
+            <td><strong>Month:{{ entry.year_month|date:"F Y" }}: Number: {{ entry.count }}| Amount: KSH{{ entry.amount|intcomma }}/=|Unpaid: KSH{{ entry.unpaid|intcomma }}/= </strong><br></td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+  </div>
+</div>
+  <div class="col-md-1">
+  </div>
+</div>
+  </div>
+
+  </div>
+  <div class="col-md-1">
+  <h1></h1>
+  </div>
+  </div>
+
+
+    </div>
+    </div>
+
+</body>
+</html>
+{%endblock%}

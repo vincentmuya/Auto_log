@@ -30,9 +30,6 @@ text-align: left;
 background-color: black;
 color: white;
 }
-/*body{
-margin-top:90px;
-}*/
 h2, h4 {
     text-align: center;
 }
@@ -40,10 +37,6 @@ h2, h4 {
 padding: 100px 1px;
 }
 @media screen and (max-width: 650px) {
-body{
-margin-top:60px;
-margin-bottom:200px;
-}
 h2{
 font-size:20px
 }

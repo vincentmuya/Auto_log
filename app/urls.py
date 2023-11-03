@@ -15,6 +15,7 @@ urlpatterns = [
     url("login", views.login_request, name="login"),
     url("register", views.register_request, name="register"),
     url("users", views.registered_users, name="registered_users"),
+    url(r'^user/(?P<id>\d+)/$', views.user_detail, name='user_detail'),
 
 ]
 

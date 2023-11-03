@@ -225,3 +225,33 @@ def registered_users(request):
         }
         user_stats.append(user_stat)
     return render(request, "users.html", {"users_in_db": users_in_db, 'user_stats': user_stats})
+
+
+def user_detail(request, id):
+    user_info = get_object_or_404(User, id=id)
+
+    items_given = Client.objects.filter(lender=user_info)
+    total_items_given = sum(client.item_amount for client in items_given)
+    total_paid_items = items_given.filter(is_item_paid=True)
+    total_paid_amount = sum(client.item_amount for client in total_paid_items)
+    total_unpaid_items = items_given.filter(is_item_paid=False)
+    total_unpaid_amount = sum(client.item_amount for client in total_unpaid_items)
+
+    # Annotate items with year and month information
+    items_given = items_given.annotate(
+        year_month=TruncMonth('item_collection_date')
+    )
+
+    # Calculate the count of items given per month
+    items_given_monthly = items_given.values('year_month').annotate(count=Count('id'), amount=Sum('item_amount'), unpaid=Sum('item_amount', filter=F('is_item_paid') == False))
+    # You can calculate other variables from the Client model here
+
+    context = {
+        'user_info': user_info,
+        'total_items_given': intcomma(total_items_given),
+        'total_paid_amount': intcomma(total_paid_amount),
+        'total_unpaid_amount': intcomma(total_unpaid_amount),
+        'items_given_monthly': items_given_monthly,
+        # Add other variables you want to display in the template
+    }
+    return render(request, 'user_detail.html', context)

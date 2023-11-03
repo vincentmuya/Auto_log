@@ -46,21 +46,17 @@
     </div>
     <br>
   {% if all_item_paid %}
-    <h4>All Item Paid - Item History</h4>
+    <h4>All Items Paid - Item History</h4>
     <table id="customers">
     {% for item in history %}
         <tr>
-            <td><strong>Loan Amount:KSH{{ item.item_amount }}/= </strong><br></td>
-            <td><strong>Loan Interest:{{ item.item }}% </strong><br></td>
+            <td><strong>Item:{{ item.item }} </strong><br></td>
+            <td><strong>Item Amount:KSH{{ item.item_amount }}/= </strong><br></td>
         </tr>
         <tr>
-            <td><strong>Loan Collection Date:{{ item.item_collection_date }} </strong><br></td>
-            <td><strong>Loan Date Paid:{{ loan.date_paid }} </strong><br></td>
+            <td><strong>Item Collection Date:{{ item.item_collection_date }} </strong><br></td>
+            <td><strong>Item Paid Date:{{ item.date_paid }} </strong><br></td>
             </tr>
-        <tr>
-            <td><strong>Loan Penalty:KSH{{ loan.loan_penalty }}/= </strong><br></td>
-            <td style="color:red;"><strong>Amount Paid:KSH{{ loan.loan_balance }}/= </strong><br></td>
-        </tr>
         {% endfor %}
     </table>
     {%elif client.is_item_paid %}
