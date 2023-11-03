@@ -37,6 +37,7 @@ def new_client(request):
         form = NewClientForm(request.POST, request.FILES)
         if form.is_valid():
             client = form.save(commit=False)
+            client.lender = current_user
             client.save()
             return HttpResponseRedirect('/')
     else:
