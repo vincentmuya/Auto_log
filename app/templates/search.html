@@ -26,7 +26,7 @@
       <strong><p class="card-text">Loan Amount:KSH{{result.item_amount}}/=</p><strong/>
 
 
-      {%if result.is_loan_paid %}
+      {%if result.is_item_paid %}
       <button type="button" class="btn btn-light" name="button">Paid</button>
       <a href="{{ result.get_absolute_url }}"><button type="button" class="btn btn-primary" name="button"> Details</button></a>
             {% else %}
