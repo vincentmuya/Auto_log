@@ -1,4 +1,4 @@
-{%extends 'base.html'%} {% load static %} {%block content%} {% load bootstrap5 %} {{ block.super}}
+{%extends 'base.html'%} {% load static %} {%block content%} {% load bootstrap5 %} {{ block.super}} {% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
 <title>Auto Log</title>
@@ -50,7 +50,7 @@
   <th></th>
   <th></th>
   <th></th>
-  <th>KSH{{total}}/=</th>
+  <th>KSH{{total|intcomma}}/=</th>
   </tr>
         </table>
         </div>

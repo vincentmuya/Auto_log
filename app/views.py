@@ -49,9 +49,10 @@ def new_client(request):
 @login_required(login_url='/accounts/login')
 def client_list(request):
     client = Client.objects.filter(is_item_paid=False)[::-1]
+    total = sum(client_obj.item_amount for client_obj in client)
     for clients in client:
         clients.item_amount = intcomma(clients.item_amount)
-    return render(request, 'client.html', {'client': client})
+    return render(request, 'client.html', {'client': client, 'total': total})
 
 
 @login_required(login_url='/accounts/login')
