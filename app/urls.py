@@ -16,6 +16,7 @@ urlpatterns = [
     url("register", views.register_request, name="register"),
     url("users", views.registered_users, name="registered_users"),
     url(r'^user/(?P<id>\d+)/$', views.user_detail, name='user_detail'),
+    url("logout", views.logout_request, name="logout"),
 
 ]
 

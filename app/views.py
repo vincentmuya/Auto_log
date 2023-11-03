@@ -204,6 +204,12 @@ def register_request(request):
     return render(request, 'registration/register.html', {'form': form})
 
 
+def logout_request(request):
+    logout(request)
+    messages.info(request, "You have successfully logged out.")
+    return redirect("/")
+
+
 def registered_users(request):
     users_in_db = User.objects.all()
 
