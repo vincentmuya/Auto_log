@@ -32,7 +32,7 @@
     <div class="row">
       <div class="col-md-6">
         <div class="credentials">
-        <h3 class="titlebold"><strong>Name:{{ client.name }}</strong> </h3>
+        <h3 class="titlebold"><strong>Name:{{ clients.0.name }}</strong> </h3>
 
 
       </div>
@@ -40,91 +40,62 @@
 
     <div class="col-md-6">
       <div class="credentials">
-        <h3 class="titlebold"><strong>Phone Number:{{ client.phone_number }} </strong></h3>
+        <h3 class="titlebold"><strong>Phone Number:{{ clients.0.phone_number }} </strong></h3>
       </div>
     </div>
     </div>
     <br>
-  {% if all_item_paid %}
-    <h4>All Items Paid - Item History</h4>
-    <table id="customers">
-    {% for item in history %}
+      {% if not clients %}
+  <p>No client found for the given slug.</p>
+      {% else %}
+      {% for client in clients %}
+      {% if not client.is_item_paid %}
+          <table id="customers">
         <tr>
-            <td><strong>Item:{{ item.item }} </strong><br></td>
-            <td><strong>Item Amount:KSH{{ item.item_amount }}/= </strong><br></td>
+            <td><strong>Item: {{ client.item }} 1</strong><br></td>
+            <td><strong>Item Amount: KSH{{ client.item_amount }}/=</strong><br></td>
         </tr>
         <tr>
-            <td><strong>Item Collection Date:{{ item.item_collection_date }} </strong><br></td>
-            <td><strong>Item Paid Date:{{ item.date_paid }} </strong><br></td>
+            <td><strong>Item Collection Date: {{ client.item_collection_date }}</strong><br></td>
+        </tr>
+        <tr>
+            <td><strong><a href="{% url 'update-client' client.pk %}"><button type="button" class="btn btn-success" name="button">Update {{ client.name }}'s Details</button></a></strong></td>
+            <td><a href="{% url 'item_paid' client.slug %}"><button type="button" class="btn btn-danger" name="button">Paid</button></a></td>
+        </tr>
+    </table>
+            {% endif %}
+    {% endfor %}
+
+  {% if clients.0.is_item_paid == False %}
+    <h2>Unpaid Items:</h2>
+    <ul>
+      {% for client in clients %}
+        {% if not client.is_item_paid %}
+          <li>{{ client.name }} - {{ client.item }}</li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  {% elif clients.0.is_item_paid == True %}
+    <h2>Paid Items:</h2>
+    <ul>
+      {% for client in clients %}
+        {% if client.is_item_paid %}
+            <table id="customers">
+            <tr>
+                <td><strong>Item: {{ client.item }} 2</strong><br></td>
+                <td><strong>Item Amount: KSH{{ client.item_amount }}/=</strong><br></td>
             </tr>
-        {% endfor %}
-    </table>
-    {%elif client.is_item_paid %}
-<h4>Item History</h4>
-
-    <table id="customers">
-        {% for item in history %}
-                <tr>
-            <td><strong>Loan Amount:KSH{{ item.item_amount }}/= </strong><br></td>
-            <td><strong>Loan Interest:{{ item.item }}% </strong><br></td>
-        </tr>
-        <tr>
-            <td><strong>Item Collection Date:{{ item.item_collection_date }} </strong><br></td>
-            <td><strong>Loan Date Paid:{{ loan.date_paid }} </strong><br></td>
+            <tr>
+                <td><strong>Item Collection Date: {{ client.item_collection_date }}</strong><br></td>
+                <td><strong>Item Date Paid: {{ client.date_paid }}</strong><br></td>
             </tr>
-        <tr>
-            <td><strong>Loan Penalty:KSH{{ loan.loan_penalty }}/= </strong><br></td>
-            <td style="color:red;"><strong>Amount Paid:KSH{{ item.loan_balance }}/= </strong><br></td>
-        </tr>
-        {% endfor %}
     </table>
-    {% elif client.name in history_names or client.name in clients_with_item and client.is_item_paid %}
-    <table id="customers">
-    <tr>
-      <td><strong>Item:{{ client.item }}1 </strong><br></td>
-      <td><strong>Item Amount:KSH{{ client.item_amount }}/= </strong><br></td>
-    </tr>
-    <tr>
-      <td><strong>item Collection Date:{{ client.item_collection_date }} </strong><br></td>
-    </tr>
-    <tr>
-      <td ><strong><a href="{% url 'update-client' client.pk %}"><button type="button" class="btn btn-success" name="button">Update{{ client.name }}'s Details </button></a></strong></td>
-          <td><a href="{% url 'item_paid' client.slug  %}"><button type="button" class="btn btn-danger" name="button">Paid</button></a></td>
-
-    </tr>
-    </table>
-      <h4>Item History</h4>
-
-    <table id="customers">
-        {% for item in history %}
-                <tr>
-            <td><strong>Item:{{ item.item }}2</strong><br></td>
-            <td><strong>Item Amount:KSH{{ item.item_amount }}/= </strong><br></td>
-        </tr>
-        <tr>
-            <td><strong>Item Collection Date:{{ item.item_collection_date }} </strong><br></td>
-            <td><strong>Item Date Paid:{{ item.date_paid }} </strong><br></td>
-            </tr>
-        {% endfor %}
-    </table>
-
-    {% else%}
-    <table id="customers">
-    <tr>
-      <td><strong>Item:{{ client.item }} </strong><br></td>
-      <td><strong>Item Amount:KSH{{ client.item_amount }}/= </strong><br></td>
-    </tr>
-    <tr>
-      <td><strong>Item Collection Date:{{ client.item_collection_date }} </strong><br></td>
-    </tr>
-    <tr>
-      <td ><strong><a href="{% url 'update-client' client.pk %}"><button type="button" class="btn btn-success" name="button">Update{{ client.name }}'s Details </button></a></strong></td>
-          <td><a href="{% url 'item_paid' client.slug  %}"><button type="button" class="btn btn-danger" name="button">Paid</button></a></td>
-
-    </tr>
-    </table>
-    {% endif %}
-    <br>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endif %}
+      <br>
   </div>
 </div>
   <div class="col-md-1">

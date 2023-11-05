@@ -56,26 +56,29 @@ def client_list(request):
 
 
 @login_required(login_url='/accounts/login')
-def client_detail(request, slug, ):
-    client = get_object_or_404(Client, slug=slug)
-    history = ItemHistory.objects.filter(name=client.name)  # Get item history for the client's name
-    all_clients = Client.objects.filter(name=client.name)   # Get all clients with the same name
+def client_detail(request, slug):
+    clients = Client.objects.filter(slug=slug)
+    history = ItemHistory.objects.filter(name__in=clients.values_list('name', flat=True))
+    all_clients = Client.objects.filter(name__in=clients.values_list('name', flat=True))
 
     # Prepare the list of names present in ItemHistory and all Clients with the same name
     history_names = list(history.values_list('name', flat=True))
     clients_with_item = list(all_clients.values_list('name', flat=True))
 
-    # Check if all items are paid for the client's name
-    all_item_paid = client.is_item_paid and all(client.is_item_paid for client in all_clients)
+    # Check if all items are paid for any of the clients with the same slug
+    all_item_paid = all(client.is_item_paid for client in clients)
 
     # Format the item_amount fields with commas
     for client in all_clients:
         client.item_amount = intcomma(client.item_amount)
 
-    for clients in history:
-        clients.item_amount = intcomma(clients.item_amount)
-    return render(request, 'client_detail.html', {'client': client, 'history': history,
-                                                  'history_names': history_names, 'clients_with_item': clients_with_item, 'all_item_paid': all_item_paid})
+    return render(request, 'client_detail.html', {
+        'clients': clients,  # Pass the queryset of clients
+        'history': history,  # Make sure history is a queryset
+        'history_names': history_names,
+        'clients_with_item': clients_with_item,
+        'all_item_paid': all_item_paid
+    })
 
 
 @login_required(login_url='/accounts/login')
