@@ -28,6 +28,7 @@
   <th>Items Given</th>
   <th>Items Paid</th>
   <th>Items Unpaid</th>
+      <th></th>
   </tr>
           <!-- Looping through Users   -->
 {% for stats in user_stats %}
@@ -36,7 +37,7 @@
     <td>KSH{{ stats.total_items_given }}/=</td>
     <td>KSH{{ stats.total_paid_items }}/=</td>
     <td>KSH{{ stats.total_unpaid_items }}/=</td>
-    <td><a href="">
+    <td><a href="{% url 'user_detail' id=stats.user_id %}">
         <button type="button" class="btn btn-info" name="button">Details</button>
         </a>
     </td>

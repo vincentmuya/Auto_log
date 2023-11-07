@@ -1,4 +1,4 @@
-{%extends 'base.html'%} {% load static %} {%block content%} {% load bootstrap5 %} {{ block.super}}
+{%extends 'base.html'%} {% load static %} {%block content%} {% load bootstrap5 %} {{ block.super}} {% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
 <title>Auto Log</title>
@@ -23,7 +23,7 @@
     <h5 class="card-title">Name:<a href="{{ result.get_absolute_url }}">{{result.name}}</a></h5>
       <strong><p class="card-text">Phone Number:{{result.phone_number}}</p><strong/>
     <strong><p class="card-text">Item:{{result.item}}</p><strong/>
-      <strong><p class="card-text">Loan Amount:KSH{{result.item_amount}}/=</p><strong/>
+      <strong><p class="card-text">Loan Amount:KSH{{result.item_total_amount|intcomma}}/=</p><strong/>
 
 
       {%if result.is_item_paid %}
