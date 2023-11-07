@@ -10,7 +10,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-
+from django.urls import reverse
 
 # Create your views here.
 @login_required(login_url='/accounts/login')
@@ -46,7 +46,13 @@ def new_client(request):
                 client.item_total_amount = item_total_amount
 
             client.save()
-            return HttpResponseRedirect('/')
+            # Get the slug or any other identifier for the newly created client
+            new_client_slug = client.slug  # Replace 'slug' with the actual identifier field
+
+            # Construct the URL for the client_detail view
+            client_detail_url = reverse('client_detail', kwargs={'slug': new_client_slug})
+
+            return HttpResponseRedirect(client_detail_url)
     else:
         form = NewClientForm()
 
