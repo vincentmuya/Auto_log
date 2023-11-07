@@ -50,9 +50,6 @@ width: 200px;
 }
 
 @media screen and (max-width:650px){
-body{
-margin-top:60px;
-}
 h2{
 font-size:25px;
 }
