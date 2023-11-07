@@ -13,8 +13,7 @@
 <body>
 
 <div class="container">
-<h1>Welcome</h1>
-<h1>{{user.username}}</h1>
+<h1>Welcome {{user.username|capfirst}}</h1>
   <div class="underline-title"></div>
   <div class="space"></div>
 
@@ -23,7 +22,7 @@
   <div class="col-sm-6">
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title">Items Amount By {{user.username}}.</h4>
+        <h4 class="card-title">Items Amount By {{user.username|capfirst}}.</h4>
         <p class="card-text">KSH{{total_by_user}}/=</p>
           <h4 class="card-title">Items Amount This Month.</h4>
         <p class="card-text">KSH:{{total_item_amount}}/=</p>
@@ -78,6 +77,7 @@
           {% if user.is_authenticated and user.is_superuser %}
 
         <h4 class="card-title" style="text-align:center;">Monthly Record.</h4>
+        <h5 style="text-align:center;">Today: {{today}}</h5>
 
     <div class="row">
       {% for item in total_item_amount_users.monthly_item_balance %}
