@@ -1,4 +1,4 @@
-{%extends 'base.html'%} {% load static %} {%block content%} {% load bootstrap5 %} {{ block.super}}
+{%extends 'base.html'%} {% load static %} {%block content%} {% load bootstrap5 %} {{ block.super}} {% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
 <title>Auto Log</title>
@@ -32,7 +32,7 @@
     <div class="row">
       <div class="col-md-6">
         <div class="credentials">
-        <h3 class="titlebold"><strong>Name:{{ clients.0.name }}</strong> </h3>
+        <h3 class="titlebold"><strong>Name: {{ clients.0.name|capfirst }}</strong> </h3>
 
 
       </div>
@@ -40,7 +40,7 @@
 
     <div class="col-md-6">
       <div class="credentials">
-        <h3 class="titlebold"><strong>Phone Number:{{ clients.0.phone_number }} </strong></h3>
+        <h3 class="titlebold"><strong>Phone Number: {{ clients.0.phone_number }} </strong></h3>
       </div>
     </div>
     </div>
@@ -52,11 +52,12 @@
       {% if not client.is_item_paid %}
           <table id="customers">
         <tr>
-            <td><strong>Item: {{ client.item }} 1</strong><br></td>
-            <td><strong>Item Amount: KSH{{ client.item_amount }}/=</strong><br></td>
+            <td><strong>Item: {{ client.item }}</strong><br></td>
+            <td><strong>Item Quantity: {{ client.item_quantity }}</strong><br></td>
         </tr>
         <tr>
-            <td><strong>Item Collection Date: {{ client.item_collection_date }}</strong><br></td>
+            <td><strong>Item Total: KSH{{ client.item_total_amount|intcomma }}/=</strong><br></td>
+            <td><strong>Collection Date: {{ client.item_collection_date }}</strong><br></td>
         </tr>
         <tr>
             <td><strong><a href="{% url 'update-client' client.pk %}"><button type="button" class="btn btn-success" name="button">Update {{ client.name }}'s Details</button></a></strong></td>
@@ -67,11 +68,15 @@
     {% endfor %}
 
   {% if clients.0.is_item_paid == False %}
+      <br>
     <h2>Unpaid Items:</h2>
     <ul>
       {% for client in clients %}
         {% if not client.is_item_paid %}
-          <li>{{ client.name }} - {{ client.item }}</li>
+        <table id="customers">
+        <td><strong>Item: {{ client.item }}</strong><br></td>
+        <td><strong>Item Total: KSH{{ client.item_total_amount|intcomma }}/=</strong><br></td>
+            </table>
         {% endif %}
       {% endfor %}
     </ul>
@@ -83,7 +88,7 @@
             <table id="customers">
             <tr>
                 <td><strong>Item: {{ client.item }} 2</strong><br></td>
-                <td><strong>Item Amount: KSH{{ client.item_amount }}/=</strong><br></td>
+                <td><strong>Item Amount: KSH{{ client.item_total_amount|intcomma }}/=</strong><br></td>
             </tr>
             <tr>
                 <td><strong>Item Collection Date: {{ client.item_collection_date }}</strong><br></td>

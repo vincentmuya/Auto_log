@@ -37,22 +37,25 @@ class Client(models.Model):
 class ItemHistory(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     name = models.CharField(max_length=50, null=True, blank=True)
+    slug = models.SlugField(unique=False, null=True)
     phone_number = models.IntegerField(null=True, blank=True)
     item = models.CharField(max_length=50, null=True, blank=True)
     date_paid = models.DateField(auto_now_add=True)
     item_collection_date = models.DateField(null=True, blank=True)
-    item_amount = models.IntegerField(null=True, blank=True)
+    item_total_amount = models.IntegerField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         # Copy item_collection_date and item_amount from the client when saving a new record in ItemHistory
         if not self.name:
             self.name = self.client.name
+        if not self.slug:
+            self.slug = self.client.slug
         if not self.phone_number:
             self.phone_number = self.client.phone_number
         if not self.item_collection_date:
             self.item_collection_date = self.client.item_collection_date
-        if not self.item_amount:
-            self.item_amount = self.client.item_amount
+        if not self.item_total_amount:
+            self.item_amount = self.client.item_total_amount
         if not self.item:
             self.item = self.client.item
         super(ItemHistory, self).save(*args, **kwargs)

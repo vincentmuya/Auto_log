@@ -12,6 +12,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
+
 # Create your views here.
 @login_required(login_url='/accounts/login')
 def index(request):
@@ -100,7 +101,13 @@ def update_client(request, pk):
     form = NewClientForm(request.POST or None, instance=instance)
     if form.is_valid():
         form.save()
-        return HttpResponseRedirect('/')
+        # Get the slug or any other identifier for the newly created client
+        update_client_slug = instance.slug  # Replace 'slug' with the actual identifier field
+
+        # Construct the URL for the client_detail view
+        client_detail_url = reverse('client_detail', kwargs={'slug': update_client_slug})
+
+        return HttpResponseRedirect(client_detail_url)
     return render(request, 'update_client.html', {'form': form})
 
 
