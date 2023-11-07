@@ -17,6 +17,14 @@ class NewClientForm(forms.ModelForm):
             'item_collection_date': DateInput(),
         }
 
+    # custom method to calculate item_total_amount
+    def calculate_item_total_amount(self):
+        item_quantity = self.cleaned_data.get('item_quantity')
+        item_unit_price = self.cleaned_data.get('item_unit_price')
+        if item_quantity is not None and item_unit_price is not None:
+            return item_quantity * item_unit_price
+        return None
+
 
 class NewUserForm(UserCreationForm):
     email = forms.EmailField(required=True)

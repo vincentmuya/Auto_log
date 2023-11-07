@@ -16,11 +16,11 @@ from django.contrib.auth.decorators import login_required
 @login_required(login_url='/accounts/login')
 def index(request):
     items_by_user = Client.objects.filter(lender_id=request.user)
-    total_by_user = sum(client.item_amount for client in items_by_user)
+    total_by_user = sum(client.item_total_amount for client in items_by_user)
     unpaid_clients = Client.objects.filter(lender_id=request.user, is_item_paid=False)
     paid_clients = Client.objects.filter(lender_id=request.user, is_item_paid=True)
-    total_paid_balance = sum(client.item_amount for client in paid_clients)
-    total_unpaid_balance = sum(client.item_amount for client in unpaid_clients)
+    total_paid_balance = sum(client.item_total_amount for client in paid_clients)
+    total_unpaid_balance = sum(client.item_total_amount for client in unpaid_clients)
     items_number_by_user = Client.objects.filter(lender_id=request.user).count
     unpaid_items_by_user = Client.objects.filter(lender_id=request.user, is_item_paid=False).count
     paid_items_by_user = Client.objects.filter(lender_id=request.user, is_item_paid=True).count
@@ -38,6 +38,12 @@ def new_client(request):
         if form.is_valid():
             client = form.save(commit=False)
             client.lender = current_user
+
+            # Calculate item_total_amount
+            item_total_amount = form.calculate_item_total_amount()
+            if item_total_amount is not None:
+                client.item_total_amount = item_total_amount
+
             client.save()
             return HttpResponseRedirect('/')
     else:
@@ -49,9 +55,9 @@ def new_client(request):
 @login_required(login_url='/accounts/login')
 def client_list(request):
     client = Client.objects.filter(is_item_paid=False)[::-1]
-    total = sum(client_obj.item_amount for client_obj in client)
+    total = sum(client_obj.item_total_amount for client_obj in client)
     for clients in client:
-        clients.item_amount = intcomma(clients.item_amount)
+        clients.item_total_amount = intcomma(clients.item_total_amount)
     return render(request, 'client.html', {'client': client, 'total': total})
 
 
@@ -70,7 +76,7 @@ def client_detail(request, slug):
 
     # Format the item_amount fields with commas
     for client in all_clients:
-        client.item_amount = intcomma(client.item_amount)
+        client.item_total_amount = intcomma(client.item_total_amount)
 
     return render(request, 'client_detail.html', {
         'clients': clients,  # Pass the queryset of clients
@@ -124,12 +130,12 @@ def profile(request, username):
     user_profile = Profile.objects.filter(user_id=request.user.id)[::-1]
     lender_list = Client.objects.filter(lender_id=request.user).order_by('item_collection_date')[::-1]
     unpaid_clients = Client.objects.filter(lender_id=request.user, is_item_paid=False)
-    total_unpaid_balance = sum(client.item_amount for client in unpaid_clients)
+    total_unpaid_balance = sum(client.item_total_amount for client in unpaid_clients)
     client = Client.objects.all()
 
     # Format the item_amount fields with commas
     for client in lender_list:
-        client.item_amount = intcomma(client.item_amount)
+        client.item_total_amount = intcomma(client.item_total_amount)
     return render(request, "profile.html", {"user_profile": user_profile, "lender_list": lender_list,
                                             "total_unpaid_balance": intcomma(total_unpaid_balance)})
 
@@ -142,7 +148,7 @@ def current_month_items_amount(request):
     items_this_month = Client.objects.filter(item_collection_date__month=today.month, item_collection_date__year=today.year)
 
     # Calculate the sum of item amounts
-    total_item_amount_monthly = items_this_month.aggregate(Sum('item_amount'))['item_amount__sum']
+    total_item_amount_monthly = items_this_month.aggregate(Sum('item_total_amount'))['item_total_amount__sum']
 
     if total_item_amount_monthly is None:
         total_item_amount_monthly = 0
@@ -155,17 +161,17 @@ def monthly_item_stats(request):
     monthly_item_balance = Client.objects.annotate(
         year_month=TruncMonth('item_collection_date')
     ).values('year_month').annotate(
-        total_balance=Sum('item_amount')
+        total_balance=Sum('item_total_amount')
     )
 
     # Calculate paid items amount
     paid_items_amount = Client.objects.filter(is_item_paid=True).aggregate(
-        total_paid=Sum('item_amount')
+        total_paid=Sum('item_total_amount')
     )['total_paid']
 
     # Calculate unpaid items balance
     unpaid_item_balance = Client.objects.filter(is_item_paid=False).aggregate(
-        total_unpaid_balance=Sum('item_amount')
+        total_unpaid_balance=Sum('item_total_amount')
     )['total_unpaid_balance']
 
     context = {
@@ -221,11 +227,11 @@ def registered_users(request):
 
     for user in users_in_db:
         items_given = Client.objects.filter(lender=user)
-        total_items_given = sum(client.item_amount for client in items_given)
+        total_items_given = sum(client.item_total_amount for client in items_given)
         paid_items = items_given.filter(is_item_paid=True)
-        paid_items = sum(client.item_amount for client in paid_items)
+        paid_items = sum(client.item_total_amount for client in paid_items)
         unpaid_items = items_given.filter(is_item_paid=False)
-        unpaid_items = sum(client.item_amount for client in unpaid_items)
+        unpaid_items = sum(client.item_total_amount for client in unpaid_items)
 
         user_stat = {
             'user': user,
@@ -242,11 +248,11 @@ def user_detail(request, id):
     user_info = get_object_or_404(User, id=id)
 
     items_given = Client.objects.filter(lender=user_info)
-    total_items_given = sum(client.item_amount for client in items_given)
+    total_items_given = sum(client.item_total_amount for client in items_given)
     total_paid_items = items_given.filter(is_item_paid=True)
-    total_paid_amount = sum(client.item_amount for client in total_paid_items)
+    total_paid_amount = sum(client.item_total_amount for client in total_paid_items)
     total_unpaid_items = items_given.filter(is_item_paid=False)
-    total_unpaid_amount = sum(client.item_amount for client in total_unpaid_items)
+    total_unpaid_amount = sum(client.item_total_amount for client in total_unpaid_items)
 
     # Annotate items with year and month information
     items_given = items_given.annotate(
@@ -254,7 +260,7 @@ def user_detail(request, id):
     )
 
     # Calculate the count of items given per month
-    items_given_monthly = items_given.values('year_month').annotate(count=Count('id'), amount=Sum('item_amount'), unpaid=Sum('item_amount', filter=F('is_item_paid') == False))
+    items_given_monthly = items_given.values('year_month').annotate(count=Count('id'), amount=Sum('item_total_amount'), unpaid=Sum('item_total_amount', filter=F('is_item_paid') == False))
     # You can calculate other variables from the Client model here
 
     context = {

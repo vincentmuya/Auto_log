@@ -12,7 +12,9 @@ class Client(models.Model):
     slug = models.SlugField(unique=False, null=True)
     phone_number = models.IntegerField(null=True, blank=True)
     item = models.CharField(max_length=50)
-    item_amount = models.IntegerField(null=True, blank=True)
+    item_quantity = models.IntegerField(null=True, blank=True)
+    item_unit_price = models.IntegerField(null=True, blank=True)
+    item_total_amount = models.IntegerField(null=True, blank=True)
     item_collection_date = models.DateField(null=True, blank=True)
     is_item_paid = models.BooleanField(default=False)
 
