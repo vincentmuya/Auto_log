@@ -10,12 +10,12 @@
 </head>
 <body>
 
-    <div class="container">
-          <div id="card-title">
-          <h2>Client Details</h2>
-            <div class="underline-title"></div>
-      </div>
-              <div class="row">
+<div class="container">
+      <div id="card-title">
+      <h2>Client Details</h2>
+        <div class="underline-title"></div>
+  </div>
+      <div class="row">
         <div class="col-md-1">
     <h1></h1>
         </div>
@@ -33,72 +33,54 @@
       <div class="col-md-6">
         <div class="credentials">
         <h3 class="titlebold"><strong>Name: {{ clients.0.name|capfirst }}</strong> </h3>
-
-
       </div>
       </div>
 
-    <div class="col-md-6">
-      <div class="credentials">
-        <h3 class="titlebold"><strong>Phone Number: {{ clients.0.phone_number }} </strong></h3>
-      </div>
-    </div>
+        <div class="col-md-6">
+          <div class="credentials">
+            <h3 class="titlebold"><strong>Phone Number: {{ clients.0.phone_number }} </strong></h3>
+          </div>
+        </div>
     </div>
     <br>
       {% if not clients %}
   <p>No client found for the given slug.</p>
-      {% else %}
-      {% for client in clients %}
+{% else %}
+  <ul>
+    {% for client in clients %}
       {% if not client.is_item_paid %}
-          <table id="customers">
-        <tr>
+        <table id="customers">
+          <tr>
             <td><strong>Item: {{ client.item }}</strong><br></td>
             <td><strong>Item Quantity: {{ client.item_quantity }}</strong><br></td>
-        </tr>
-        <tr>
+          </tr>
+          <tr>
             <td><strong>Item Total: KSH{{ client.item_total_amount|intcomma }}/=</strong><br></td>
             <td><strong>Collection Date: {{ client.item_collection_date }}</strong><br></td>
-        </tr>
-        <tr>
+          </tr>
+          <tr>
             <td><strong><a href="{% url 'update-client' client.pk %}"><button type="button" class="btn btn-success" name="button">Update {{ client.name }}'s Details</button></a></strong></td>
             <td><a href="{% url 'item_paid' client.slug %}"><button type="button" class="btn btn-danger" name="button">Paid</button></a></td>
-        </tr>
-    </table>
-            {% endif %}
+          </tr>
+        </table>
+      {% endif %}
     {% endfor %}
 
-  {% if clients.0.is_item_paid == False %}
-      <br>
-    <h2>Unpaid Items:</h2>
-    <ul>
-      {% for client in clients %}
-        {% if not client.is_item_paid %}
+    {% for client in clients %}
+      {% if client.is_item_paid %}
         <table id="customers">
-        <td><strong>Item: {{ client.item }}</strong><br></td>
-        <td><strong>Item Total: KSH{{ client.item_total_amount|intcomma }}/=</strong><br></td>
-            </table>
-        {% endif %}
-      {% endfor %}
-    </ul>
-  {% elif clients.0.is_item_paid == True %}
-    <h2>Paid Items:</h2>
-    <ul>
-      {% for client in clients %}
-        {% if client.is_item_paid %}
-            <table id="customers">
-            <tr>
-                <td><strong>Item: {{ client.item }} 2</strong><br></td>
-                <td><strong>Item Amount: KSH{{ client.item_total_amount|intcomma }}/=</strong><br></td>
-            </tr>
-            <tr>
-                <td><strong>Item Collection Date: {{ client.item_collection_date }}</strong><br></td>
-                <td><strong>Item Date Paid: {{ client.date_paid }}</strong><br></td>
-            </tr>
-    </table>
-        {% endif %}
-      {% endfor %}
-    </ul>
-  {% endif %}
+          <tr>
+            <td><strong>Item: {{ client.item }}</strong><br></td>
+            <td><strong>Item Amount: KSH{{ client.item_total_amount|intcomma }}/=</strong><br></td>
+          </tr>
+          <tr>
+            <td><strong>Item Collection Date: {{ client.item_collection_date }}</strong><br></td>
+            <td><strong>Item Date Paid: {{ client.date_paid }}</strong><br></td>
+          </tr>
+        </table>
+      {% endif %}
+    {% endfor %}
+  </ul>
 {% endif %}
       <br>
   </div>

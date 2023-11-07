@@ -55,7 +55,7 @@ class ItemHistory(models.Model):
         if not self.item_collection_date:
             self.item_collection_date = self.client.item_collection_date
         if not self.item_total_amount:
-            self.item_amount = self.client.item_total_amount
+            self.item_total_amount = self.client.item_total_amount
         if not self.item:
             self.item = self.client.item
         super(ItemHistory, self).save(*args, **kwargs)

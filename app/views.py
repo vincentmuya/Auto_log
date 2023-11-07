@@ -79,7 +79,7 @@ def client_detail(request, slug):
     history_names = list(history.values_list('name', flat=True))
     clients_with_item = list(all_clients.values_list('name', flat=True))
 
-    # Check if all items are paid for any of the clients with the same slug
+    # Check if all items are paid for all clients with the same slug
     all_item_paid = all(client.is_item_paid for client in clients)
 
     # Format the item_amount fields with commas
@@ -136,7 +136,13 @@ def item_paid(request,  slug):
     # Create item history entry
     ItemHistory.objects.create(client=client)
 
-    return HttpResponse("item Paid Successfully!")
+    # Get the slug of the client for redirection
+    client_slug = client.slug  # Replace 'slug' with the actual identifier field
+
+    # Construct the URL for the client_detail view
+    client_detail_url = reverse('client_detail', kwargs={'slug': client_slug})
+
+    return HttpResponseRedirect(client_detail_url)
 
 
 @login_required(login_url='/accounts/login')
