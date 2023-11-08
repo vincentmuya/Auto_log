@@ -59,13 +59,14 @@
             <td><strong>Collection Date: {{ client.item_collection_date }}</strong><br></td>
           </tr>
           <tr>
-            <td><strong><a href="{% url 'update-client' client.pk %}"><button type="button" class="btn btn-success" name="button">Update {{ client.name }}'s Details</button></a></strong></td>
+            <td><strong><a href="{% url 'update-client' client.pk %}"><button type="button" class="btn btn-success" name="button">Update Details</button></a></strong></td>
             <td><a href="{% url 'item_paid' client.slug %}"><button type="button" class="btn btn-danger" name="button">Paid</button></a></td>
           </tr>
         </table>
       {% endif %}
     {% endfor %}
-
+    <br>
+<h4>Paid Items</h4>
     {% for client in clients %}
       {% if client.is_item_paid %}
         <table id="customers">

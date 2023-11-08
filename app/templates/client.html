@@ -27,11 +27,10 @@
   <th>Name</th>
   <th>Phone Number</th>
   <th>Item</th>
-  <th>Item Amount</th>
-  <th>Item collection date:</th>
-  <th></th>
-  <th></th>
-  <th></th>
+  <th>Quantity</th>
+  <th>Amount</th>
+  <th>Collection date:</th>
+
   </tr>
           <!-- Looping through client   -->
           {%  for single_client in client %}
@@ -39,11 +38,9 @@
             <td><a href="{{ single_client.get_absolute_url }}">{{single_client.name}}</a></td>
             <td>{{single_client.phone_number}}</td>
             <td>{{single_client.item}}</td>
+            <td>{{single_client.item_quantity}}</td>
             <td>{{single_client.item_total_amount}}</td>
             <td>{{single_client.item_collection_date}}</td>
-            <td><a href="{{ single_client.get_absolute_url }}"><button type="button" class="btn btn-info" name="button">Details</button></a></td>
-            <td><a href="{% url 'update-client' single_client.pk %}"><button type="button" class="btn btn-success" name="button">Update</button></a></td>
-            <td><a href="{% url 'item_paid' single_client.slug  %}"><button type="button" class="btn btn-danger" name="button">Paid</button></a></td>
 
           </tr>
 
@@ -53,9 +50,7 @@
   <th></th>
   <th></th>
   <th></th>
-   <th></th>
-    <th></th>
-   <th></th>
+<th></th>
   <th>KSH{{total|intcomma}}/=</th>
   </tr>
         </table>

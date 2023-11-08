@@ -30,8 +30,9 @@
   <th>Name</th>
   <th>Phone Number</th>
   <th>Item</th>
-  <th>Item Amount</th>
-  <th>Item Collection Date</th>
+  <th>Amount</th>
+  <th>Collection Date</th>
+  <th>Item Status</th>
   </tr>
           <!-- Looping through lender_listlender_list   -->
       {%for post_item in lender_list%}
@@ -42,12 +43,9 @@
             <td>KSH{{post_item.item_total_amount}}/=</td>
             <td>{{post_item.item_collection_date}}</td>
             {%if post_item.is_item_paid %}
-        <td><button type="button" class="btn btn-light" name="button">Paid</button></td>
-        <td><a href="{{ post_item.get_absolute_url }}"><button type="button" class="btn btn-primary" name="button"> Details</button></a></td>
+        <td style="color:green">Paid</td>
       {% else %}
-        <td><a href="{{ post_item.get_absolute_url }}"><button type="button" class="btn btn-info" name="button">Details</button></a></td>
-        <td><a href="{% url 'update-client' post_item.pk %}"><button type="button" class="btn btn-success" name="button">Update</button></a></td>
-        <td><a href="{% url 'item_paid' post_item.slug  %}"><button type="button" class="btn btn-danger" name="button">Paid</button></a></td>
+        <td style="color:red">Unpaid</td>
         {% endif %}
           </tr>
     {%endfor%}
@@ -56,6 +54,7 @@
   <th></th>
   <th></th>
   <th></th>
+            <th></th>
   <th>KSH{{ total_unpaid_balance }}/=</th>
   </tr>
         </table>
