@@ -30,7 +30,7 @@ class Client(models.Model):
 
     @classmethod
     def search_by_name(cls, search_term):
-        search_result = cls.objects.filter(name__exact=search_term)
+        search_result = cls.objects.filter(name__icontains=search_term)
         return search_result
 
 
