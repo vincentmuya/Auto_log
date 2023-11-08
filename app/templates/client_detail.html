@@ -52,10 +52,13 @@
         <table id="customers">
           <tr>
             <td><strong>Item: {{ client.item }}</strong><br></td>
-            <td><strong>Item Quantity: {{ client.item_quantity }}</strong><br></td>
+            <td><strong>Item Unit Price: {{ client.item_unit_price|intcomma }}</strong><br></td>
           </tr>
           <tr>
-            <td><strong>Item Total: KSH{{ client.item_total_amount|intcomma }}/=</strong><br></td>
+            <td><strong>Item Quantity: {{ client.item_quantity }}</strong><br></td>
+            <td><strong>TotalAmount: KSH{{ client.item_total_amount|intcomma }}/=</strong><br></td>
+          </tr>
+          <tr>
             <td><strong>Collection Date: {{ client.item_collection_date }}</strong><br></td>
           </tr>
           <tr>
@@ -72,13 +75,14 @@
         <table id="customers">
           <tr>
             <td><strong>Item: {{ client.item }}</strong><br></td>
-            <td><strong>Item Amount: KSH{{ client.item_total_amount|intcomma }}/=</strong><br></td>
+            <td><strong>Item Unit Price: KSH{{ client.item_unit_price|intcomma }}/=</strong><br></td>
           </tr>
           <tr>
-            <td><strong>Item Collection Date: {{ client.item_collection_date }}</strong><br></td>
-            <td><strong>Item Date Paid: {{ client.date_paid }}</strong><br></td>
+            <td><strong>Item Quantity: {{ client.item_quantity }}</strong><br></td>
+            <td><strong>Total Amount: {{ client.item_total_amount|intcomma }}</strong><br></td>
           </tr>
         </table>
+    <hr>
       {% endif %}
     {% endfor %}
   </ul>
