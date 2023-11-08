@@ -11,6 +11,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
+from urllib.parse import unquote  # Import unquote from urllib.parse
 
 
 # Create your views here.
@@ -35,6 +36,7 @@ def index(request):
 @login_required(login_url='/accounts/login')
 def new_client(request):
     current_user = request.user
+
     if request.method == 'POST':
         form = NewClientForm(request.POST, request.FILES)
         if form.is_valid():
@@ -55,7 +57,12 @@ def new_client(request):
 
             return HttpResponseRedirect(client_detail_url)
     else:
-        form = NewClientForm()
+        # Get the values from the query parameters and decode them
+        name = unquote(request.GET.get('name', ''))  # Use unquote here
+        phone_number = unquote(request.GET.get('phone_number', ''))  # Use unquote here
+
+        initial_data = {'name': name, 'phone_number': phone_number}
+        form = NewClientForm(initial=initial_data)
 
     return render(request, 'new_client.html', {"form": form})
 

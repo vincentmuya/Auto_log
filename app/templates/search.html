@@ -13,39 +13,83 @@
 <div class="container">
 <h2>Search Results</h2>
 <div class="underline-title"></div>
-<div class="card text-center">
   <div class="card-header">
       {% if name %}
     Found {{ name|length }} of searched term {{message}}
   </div>
     {% for result in name%}
-  <div class="card-body">
-    <h5 class="card-title">Name:<a href="{{ result.get_absolute_url }}">{{result.name}}</a></h5>
-      <strong><p class="card-text">Phone Number:{{result.phone_number}}</p><strong/>
-    <strong><p class="card-text">Item:{{result.item}}</p><strong/>
-      <strong><p class="card-text">Loan Amount:KSH{{result.item_total_amount|intcomma}}/=</p><strong/>
-
-
       {%if result.is_item_paid %}
-      <button type="button" class="btn btn-light" name="button">Paid</button>
-      <a href="{{ result.get_absolute_url }}"><button type="button" class="btn btn-primary" name="button"> Details</button></a>
+          <table id="customers">
+              <div class="row">
+      <div class="col-md-6">
+        <div class="credentials">
+        <h3 class="titlebold"><strong>Name: <a href="{{ result.get_absolute_url }}">{{ result.name|capfirst }}<a/> </strong> </h3>
+      </div>
+      </div>
+
+        <div class="col-md-6">
+          <div class="credentials">
+            <h3 class="titlebold"><strong>Phone Number: {{ result.phone_number }} </strong></h3>
+          </div>
+        </div>
+    </div>
+    <br>
+          <tr>
+            <td><strong>Item: {{ result.item }}</strong><br></td>
+            <td><strong>Item Unit Price: KSH{{ result.item_unit_price|intcomma }}/=</strong><br></td>
+          </tr>
+          <tr>
+            <td><strong>Item Quantity: {{ result.item_quantity }}</strong><br></td>
+            <td><strong>Total Amount: {{ result.item_total_amount|intcomma }}</strong><br></td>
+          </tr>
+              <tr>
+            <td><strong>Status: Paid</strong><br></td>
+            <td><strong><a href="{% url 'new_client' %}?name={{ result.name|urlencode }}&phone_number={{ result.phone_number|urlencode }}"><button type="button" class="btn btn-primary" name="button"> Add Item</button></a></strong><br></td>
+          </tr>
+        </table>
+    <hr>
             {% else %}
+            <table id="customers">
+                              <div class="row">
+      <div class="col-md-6">
+        <div class="credentials">
+        <h3 class="titlebold"><strong>Name: <a href="{{ result.get_absolute_url }}">{{ result.name|capfirst }}</a></strong> </h3>
+      </div>
+      </div>
 
-      <a href="{{ result.get_absolute_url }}"><button type="button" class="btn btn-info" name="button">Details</button></a>
-        <a href="{% url 'update-client' result.pk %}"><button type="button" class="btn btn-success" name="button">Update</button></a>
-        <a href="{% url 'item_paid' result.slug  %}"><button type="button" class="btn btn-danger" name="button">Paid</button></a>
+        <div class="col-md-6">
+          <div class="credentials">
+            <h3 class="titlebold"><strong>Phone Number: {{ result.phone_number }} </strong></h3>
+          </div>
+        </div>
+    </div>
+          <tr>
+            <td><strong>Item: {{ result.item }}</strong><br></td>
+            <td><strong>Item Unit Price: {{ result.item_unit_price|intcomma }}</strong><br></td>
+          </tr>
+          <tr>
+            <td><strong>Item Quantity: {{ result.item_quantity }}</strong><br></td>
+            <td><strong>TotalAmount: KSH{{ result.item_total_amount|intcomma }}/=</strong><br></td>
+          </tr>
+          <tr>
+            <td><strong>Collection Date: {{ result.item_collection_date }}</strong><br></td>
+              <td><strong>Status: UnPaid</strong><br></td>
+          </tr>
+          <tr>
+            <td><strong><a href="{% url 'update-client' result.pk %}"><button type="button" class="btn btn-success" name="button">Update Details</button></a></strong></td>
+            <td><a href="{% url 'item_paid' result.slug %}"><button type="button" class="btn btn-danger" name="button">Paid</button></a></td>
+          <td><strong><a href="{% url 'new_client' %}?name={{ result.name|urlencode }}&phone_number={{ result.phone_number|urlencode }}"><button type="button" class="btn btn-primary" name="button"> Add Item</button></a></strong><br></td>
+
+          </tr>
+        </table>
+    <hr>
       {% endif %}
-  </div>
      {% endfor %}
-  <div class="card-footer text-muted">
 
-  </div>
-</div>
 {% else %}
 <h2>No Results of searched term {{message}}</h2>
 {% endif %}
 </div>
-
 </body>
 </html>
 

@@ -43,6 +43,8 @@
         </div>
     </div>
     <br>
+    <td><strong><a href="{% url 'new_client' %}?name={{ clients.0.name|urlencode }}&phone_number={{ clients.0.phone_number|urlencode }}"><button type="button" class="btn btn-primary" name="button">Add Item</button></a></strong></td>
+        <hr>
       {% if not clients %}
   <p>No client found for the given slug.</p>
 {% else %}
@@ -68,6 +70,7 @@
         </table>
       {% endif %}
     {% endfor %}
+
     <br>
 <h4>Paid Items</h4>
     {% for client in clients %}
