@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, HttpResponse, get_list_or_404, redirect
+from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, get_list_or_404, redirect, reverse
 from .forms import NewClientForm, NewUserForm
 from django.http import HttpResponseRedirect
 from .models import Client, ItemHistory, Profile, User
@@ -154,6 +154,23 @@ def item_paid(request,  slug):
     client_slug = client.slug  # Replace 'slug' with the actual identifier field
 
     # Construct the URL for the client_detail view
+    client_detail_url = reverse('client_detail', kwargs={'slug': client_slug})
+
+    return HttpResponseRedirect(client_detail_url)
+
+
+def mark_all_items_paid(request, slug):
+    clients = Client.objects.filter(slug=slug)
+
+    for client in clients:
+        if not client.is_item_paid:
+            client.is_item_paid = True
+            client.save()
+            # Create item history entry for each client
+            ItemHistory.objects.create(client=client)
+
+    client_slug = slug  # You already have the slug from the URL
+
     client_detail_url = reverse('client_detail', kwargs={'slug': client_slug})
 
     return HttpResponseRedirect(client_detail_url)

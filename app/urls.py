@@ -17,6 +17,7 @@ urlpatterns = [
     url("users", views.registered_users, name="registered_users"),
     url(r'^user/(?P<id>\d+)/$', views.user_detail, name='user_detail'),
     url("logout", views.logout_request, name="logout"),
+    url('mark_all_items_paid/(?P<slug>[-\w]+)/$', views.mark_all_items_paid, name='mark_all_items_paid'),
 
 ]
 

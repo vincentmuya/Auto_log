@@ -47,6 +47,8 @@
     <tr>
     <td><strong><a href="{% url 'new_client' %}?name={{ clients.0.name|urlencode }}&phone_number={{ clients.0.phone_number|urlencode }}"><button type="button" class="btn btn-primary" name="button">Add Item</button></a></strong></td>
     <td><strong>Unpaid Items Total KSH{{unpaid_items_total|intcomma}}/=</strong></td>
+    <td><a href="{% url 'mark_all_items_paid' clients.0.slug %}"><button type="button" class="btn btn-danger" name="button">Paid All Items</button></a></td>
+
       </tr>
       </table>
     <hr>
