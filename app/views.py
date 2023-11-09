@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from .models import Client, ItemHistory, Profile, User
 from django.contrib.humanize.templatetags.humanize import intcomma
 from datetime import datetime
-from django.db.models import Count, Sum, F
+from django.db.models import Count, Sum, F, DecimalField
 from django.db.models.functions import TruncMonth
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
@@ -12,6 +12,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from urllib.parse import unquote  # Import unquote from urllib.parse
+from decimal import Decimal
+from django.db.models.functions import Coalesce
 
 
 # Create your views here.
@@ -89,6 +91,10 @@ def client_detail(request, slug):
     # Check if all items are paid for all clients with the same slug
     all_item_paid = all(client.is_item_paid for client in clients)
 
+    # Calculate the total of unpaid items for the client
+    unpaid_items_total = all_clients.filter(is_item_paid=False).aggregate(
+        total=Coalesce(Sum('item_total_amount', output_field=DecimalField()), Decimal('0')))['total']
+
     # Format the item_amount fields with commas
     for client in all_clients:
         client.item_total_amount = intcomma(client.item_total_amount)
@@ -98,7 +104,8 @@ def client_detail(request, slug):
         'history': history,  # Make sure history is a queryset
         'history_names': history_names,
         'clients_with_item': clients_with_item,
-        'all_item_paid': all_item_paid
+        'all_item_paid': all_item_paid,
+        'unpaid_items_total': unpaid_items_total,
     })
 
 
