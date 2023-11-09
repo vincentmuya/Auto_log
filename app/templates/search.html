@@ -36,7 +36,7 @@
     <br>
           <tr>
             <td><strong>Item: {{ result.item }}</strong><br></td>
-            <td><strong>Item Unit Price: KSH{{ result.item_unit_price|intcomma }}/=</strong><br></td>
+            <td><strong>Item Unit Price: {{ result.item_unit_price|intcomma }}</strong><br></td>
           </tr>
           <tr>
             <td><strong>Item Quantity: {{ result.item_quantity }}</strong><br></td>
@@ -69,7 +69,7 @@
           </tr>
           <tr>
             <td><strong>Item Quantity: {{ result.item_quantity }}</strong><br></td>
-            <td><strong>TotalAmount: KSH{{ result.item_total_amount|intcomma }}/=</strong><br></td>
+            <td><strong>TotalAmount: {{ result.item_total_amount|intcomma }}</strong><br></td>
           </tr>
           <tr>
             <td><strong>Collection Date: {{ result.item_collection_date }}</strong><br></td>

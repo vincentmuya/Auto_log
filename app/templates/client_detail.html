@@ -46,7 +46,7 @@
     <table id="customers">
     <tr>
     <td><strong><a href="{% url 'new_client' %}?name={{ clients.0.name|urlencode }}&phone_number={{ clients.0.phone_number|urlencode }}"><button type="button" class="btn btn-primary" name="button">AddItem</button></a></strong></td>
-    <td><strong>Unpaid Total KSH{{unpaid_items_total|intcomma}}/=</strong></td>
+    <td><strong>Unpaid: {{unpaid_items_total|intcomma}}</strong></td>
       {% if not all_item_paid %}
     <td><a href="{% url 'mark_all_items_paid' clients.0.slug %}"><button type="button" class="btn btn-danger" name="button">PaidAll</button></a></td>
   {% endif %}
@@ -66,7 +66,7 @@
           </tr>
           <tr>
             <td><strong>Item Quantity: {{ client.item_quantity }}</strong><br></td>
-            <td><strong>TotalAmount: KSH{{ client.item_total_amount|intcomma }}/=</strong><br></td>
+            <td><strong>TotalAmount: {{ client.item_total_amount|intcomma }}</strong><br></td>
           </tr>
           <tr>
             <td><strong>Collection Date: {{ client.item_collection_date }}</strong><br></td>
@@ -86,7 +86,7 @@
         <table id="customers">
           <tr>
             <td><strong>Item: {{ client.item }}</strong><br></td>
-            <td><strong>Item Unit Price: KSH{{ client.item_unit_price|intcomma }}/=</strong><br></td>
+            <td><strong>Item Unit Price: {{ client.item_unit_price|intcomma }}</strong><br></td>
           </tr>
           <tr>
             <td><strong>Item Quantity: {{ client.item_quantity }}</strong><br></td>

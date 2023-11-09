@@ -40,7 +40,7 @@
             <td><a href="{{ post_item.get_absolute_url }}">{{post_item.name}}<a/></td>
             <td>{{post_item.phone_number}}</td>
             <td>{{post_item.item}}</td>
-            <td>KSH{{post_item.item_total_amount}}/=</td>
+            <td>{{post_item.item_total_amount}}</td>
             <td>{{post_item.item_collection_date}}</td>
             {%if post_item.is_item_paid %}
         <td style="color:green">Paid</td>
@@ -55,7 +55,7 @@
   <th></th>
   <th></th>
             <th></th>
-  <th>KSH{{ total_unpaid_balance }}/=</th>
+  <th>{{ total_unpaid_balance }}</th>
   </tr>
         </table>
         </div>

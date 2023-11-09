@@ -20,23 +20,23 @@
 <!--Cards-->
 <div class="row">
   <div class="col-sm-6">
-    <div class="card">
+    <div class="card" style="text-align:center;">
       <div class="card-body">
         <h4 class="card-title">Items Amount By {{user.username|capfirst}}.</h4>
-        <p class="card-text">KSH{{total_by_user}}/=</p>
+        <p class="card-text">KSH<strong>{{total_by_user}}</strong>/=</p>
           <h4 class="card-title">Items Amount This Month.</h4>
-        <p class="card-text">KSH:{{total_item_amount}}/=</p>
+        <p class="card-text">KSH:<strong>{{total_item_amount}}</strong>/=</p>
         <a href="{%url 'profile' user.username%}" class="btn btn-primary">View Profile</a>
       </div>
     </div>
   </div>
   <div class="col-sm-6">
-    <div class="card">
+    <div class="card" style="text-align:center;">
       <div class="card-body">
         <h4 class="card-title">Paid Items Amount.</h4>
-        <p class="card-text">KSH{{ total_paid_balance }}/=</p>
+        <p class="card-text">KSH<strong>{{ total_paid_balance }}</strong>/=</p>
         <h4 class="card-title">Unpaid Items Amount.</h4>
-        <p class="card-text">KSH{{ total_unpaid_balance }}/=</p>
+        <p class="card-text">KSH<strong>{{ total_unpaid_balance }}</strong>/=</p>
         <a href="{%url 'client_list' %}" class="btn btn-primary">View Clients</a>
       </div>
     </div>
@@ -45,12 +45,12 @@
 </div>
   <div class="row">
   <div class="col-sm-6">
-    <div class="card">
+    <div class="card" style="text-align:center;">
       <div class="card-body">
         <h4 class="card-title">Items Status.</h4>
-        <p class="card-text">Items Given:{{items_number_by_user}}.</p>
-        <p class="card-text">Items Paid:{{paid_items_by_user}}.</p>
-        <p class="card-text">Items Unpaid:{{unpaid_items_by_user}}.</p>
+        <p class="card-text">Items Given: <strong>{{items_number_by_user}}</strong>.</p>
+        <p class="card-text">Items Paid: <strong>{{paid_items_by_user}}</strong>.</p>
+        <p class="card-text">Items Unpaid: <strong>{{unpaid_items_by_user}}</strong>.</p>
         <a href="{%url 'profile' user.username%}" class="btn btn-primary">View</a>
       </div>
     </div>
@@ -82,12 +82,12 @@
     <div class="row">
       {% for item in total_item_amount_users.monthly_item_balance %}
   <div class="col-sm-6">
-    <div class="card">
+    <div class="card" style="text-align:center;">
       <div class="card-body">
         <h4 class="card-title">{{ item.year_month|date:"F" }}.</h4>
-        <p class="card-text">Item Amount Given: KSH{{ item.total_balance|intcomma }}/=.</p>
-        <p class="card-text">Paid Items: KSH{{ total_item_amount_users.paid_items_amount|intcomma }}/=.</p>
-        <p class="card-text">Unpaid Items: KSH{{ total_item_amount_users.unpaid_item_balance|intcomma }}/=.</p>
+        <p class="card-text">Item Amount Given: KSH<strong>{{ item.total_balance|intcomma }}</strong>/=</p>
+        <p class="card-text">Paid Items: KSH<strong>{{ total_item_amount_users.paid_items_amount|intcomma }}</strong>/=</p>
+        <p class="card-text">Unpaid Items: KSH<strong>{{ total_item_amount_users.unpaid_item_balance|intcomma }}</strong>/=</p>
       </div>
     </div>
   </div>
