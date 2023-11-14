@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, get_list_or_404, redirect, reverse
-from .forms import NewClientForm, NewUserForm
+from .forms import NewClientForm, NewUserForm, UpdateUnpaidItemsForm
 from django.http import HttpResponseRedirect
 from .models import Client, ItemHistory, Profile, User
 from django.contrib.humanize.templatetags.humanize import intcomma
@@ -14,8 +14,7 @@ from django.urls import reverse
 from urllib.parse import unquote  # Import unquote from urllib.parse
 from decimal import Decimal
 from django.db.models.functions import Coalesce
-from django.views.generic import DeleteView
-from django.urls import reverse_lazy
+from django.db import transaction, models
 
 
 # Create your views here.
@@ -80,6 +79,47 @@ def client_list(request):
     return render(request, 'client.html', {'client': client, 'total': total})
 
 
+def update_unpaid_items(client, updated_total):
+    # Use transaction.atomic() to ensure the entire operation is atomic
+    with transaction.atomic():
+        unpaid_items = Client.objects.filter(slug=client.slug, is_item_paid=False)
+
+        current_total = unpaid_items.aggregate(
+            total=models.Sum('item_total_amount', output_field=models.DecimalField())
+        )['total'] or Decimal('0')
+        print(f"Current Total: {current_total}")
+        print(f"Updated Total 1: {updated_total}")
+
+        difference = current_total - updated_total
+        print(f"Difference: {difference}")
+
+        if difference > 0:
+            # Deduct the amount from unpaid items matching the client's slug
+            for item in unpaid_items.order_by('item_collection_date'):
+                if item.item_total_amount > difference:
+                    # If the item has more amount than needed, deduct the difference and break
+                    item.item_total_amount -= difference
+                    print(f"Item 1: {item}")
+
+                    item.save()
+                    break
+                else:
+                    # If the item amount is less than or equal to the difference, deduct the item amount
+                    difference -= item.item_total_amount
+                    item.item_total_amount = Decimal('0')
+                    print(f"Item 2: {item}")
+
+                    item.is_item_paid = True
+                    item.save()
+
+            # Return the deducted amount
+            print(f"Updated Total 2: {updated_total}")
+            return updated_total
+
+    # If no deduction was made, return 0
+    return Decimal('0')
+
+
 @login_required(login_url='/accounts/login')
 def client_detail(request, slug):
     clients = Client.objects.filter(slug=slug)
@@ -97,6 +137,23 @@ def client_detail(request, slug):
     unpaid_items_total = all_clients.filter(is_item_paid=False).aggregate(
         total=Coalesce(Sum('item_total_amount', output_field=DecimalField()), Decimal('0')))['total']
 
+    form = UpdateUnpaidItemsForm()
+
+    updated_total = 0
+    new_unpaid_item = Decimal('0')
+
+    if request.method == 'POST':
+        # Assuming you have a form with the updated total in the POST data
+        updated_total = Decimal(request.POST.get('updated_total', '0'))
+        print(f"Updated Total: {updated_total}")
+
+        # Move the loop outside the calculation of unpaid_items_total
+        for client in clients:
+            new_unpaid_item = update_unpaid_items(client, updated_total)
+
+        # Update the unpaid_items_total after the changes
+        unpaid_items_total += new_unpaid_item
+
     # Format the item_amount fields with commas
     for client in all_clients:
         client.item_total_amount = intcomma(client.item_total_amount)
@@ -108,7 +165,29 @@ def client_detail(request, slug):
         'clients_with_item': clients_with_item,
         'all_item_paid': all_item_paid,
         'unpaid_items_total': unpaid_items_total,
+        'form': form,
+        'updated_total': updated_total,
+        'new_unpaid_item': new_unpaid_item,
     })
+
+
+@login_required(login_url='/accounts/login')
+def update_unpaid_items_view(request, slug):
+    if request.method == 'POST':
+        updated_total = Decimal(request.POST.get('updated_total', '0'))
+        print(f"update_unpaid_items_view called with slug: {slug}")
+        print(f"Updated Total in POST: {updated_total}")
+
+        clients = Client.objects.filter(slug=slug)
+        client = clients.first()
+
+        unpaid_items_total = Client.objects.filter(slug=slug, is_item_paid=False).aggregate(
+            total=Coalesce(Sum('item_total_amount', output_field=DecimalField()), Decimal('0')))['total']
+
+        new_unpaid_item_amount = update_unpaid_items(client, updated_total)
+        unpaid_items_total += new_unpaid_item_amount
+
+    return redirect('client_detail', slug=slug)
 
 
 @login_required(login_url='/accounts/login')

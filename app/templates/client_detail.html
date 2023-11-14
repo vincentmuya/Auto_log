@@ -7,6 +7,10 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="{% static 'css/client_detail.css' %}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </head>
 <body>
 
@@ -46,7 +50,9 @@
     <table id="customers">
     <tr>
     <td><strong><a href="{% url 'new_client' %}?name={{ clients.0.name|urlencode }}&phone_number={{ clients.0.phone_number|urlencode }}"><button type="button" class="btn btn-primary" name="button">AddItem</button></a></strong></td>
-    <td><strong>Unpaid: {{unpaid_items_total|intcomma}}</strong></td>
+    <td><strong>Unpaid: {{unpaid_items_total|intcomma}}</strong>
+          <button type="button" class="btn btn-success" data-toggle="modal" data-target="#updateModal">Update</button>
+    </td>
       {% if not all_item_paid %}
     <td><a href="{% url 'mark_all_items_paid' clients.0.slug %}"><button type="button" class="btn btn-danger" name="button">PaidAll</button></a></td>
   {% endif %}
@@ -72,9 +78,8 @@
             <td><strong>Collection Date: {{ client.item_collection_date }}</strong><br></td>
           </tr>
           <tr>
-            <td><strong><a href="{% url 'update-client' client.pk %}"><button type="button" class="btn btn-success" name="button">Update Details</button></a></strong></td>
-            <td><a href="{% url 'item_paid' client.slug %}"><button type="button" class="btn btn-danger" name="button">Paid</button></a></td>
-            <td>
+            <td><strong><a href="{% url 'update-client' client.pk %}"><button type="button" class="btn btn-success" name="button">Update</button></a></strong></td>
+            <td><a href="{% url 'item_paid' client.slug %}"><button type="button" class="btn btn-warning" name="button">Paid</button></a>
             <button type="button" class="btn btn-danger" name="button" onclick="confirmDelete({{ client.pk }})">Delete</button>
             </td>
           </tr>
@@ -118,7 +123,27 @@
 
     </div>
     </div>
-
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="updateModalLabel">Enter Unpaid Amount</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Your update form content -->
+<form method="post" action="{% url 'update_unpaid_items' slug=clients.0.slug %}">
+    {% csrf_token %}
+    <input type="text" name="updated_total" value="{{ updated_total }}">
+    <input type="hidden" name="unpaid_items_total" value="{{ unpaid_items_total }}">
+    <button type="submit" class="btn btn-primary">Update</button>
+</form>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
 {%endblock%}

@@ -39,3 +39,11 @@ class NewUserForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+
+class UpdateUnpaidItemsForm(forms.Form):
+    unpaid_items_total = forms.DecimalField(
+        label='Enter Unpaid Amount',
+        min_value=0,
+        widget=forms.NumberInput(attrs={'step': '0.01'})  # Adjust step as needed
+    )

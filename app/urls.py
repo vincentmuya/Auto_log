@@ -2,12 +2,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import re_path as url
 from . import views
+from .views import update_unpaid_items_view
 
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url("new/client", views.new_client, name="new_client"),
     url("client_list", views.client_list, name="client_list"),
+    url(r'^(?P<slug>[-\w]+)/update_unpaid_items/$', update_unpaid_items_view, name='update_unpaid_items'),
     url(r'^(?P<slug>[-\w]+)/$', views.client_detail, name='client_detail'),
     url(r'^update/client/(?P<pk>\d+)/$', views.update_client, name='update-client'),
     url(r'^search$', views.search_results, name='search_results'),
@@ -20,6 +22,7 @@ urlpatterns = [
     url("logout", views.logout_request, name="logout"),
     url('mark_all_items_paid/(?P<slug>[-\w]+)/$', views.mark_all_items_paid, name='mark_all_items_paid'),
     url(r'^delete/client/(?P<pk>\d+)/$', views.delete_client, name='delete_client'),
+
 ]
 
 if settings.DEBUG:
