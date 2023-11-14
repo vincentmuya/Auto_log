@@ -14,6 +14,8 @@ from django.urls import reverse
 from urllib.parse import unquote  # Import unquote from urllib.parse
 from decimal import Decimal
 from django.db.models.functions import Coalesce
+from django.views.generic import DeleteView
+from django.urls import reverse_lazy
 
 
 # Create your views here.
@@ -323,3 +325,16 @@ def user_detail(request, id):
         # Add other variables you want to display in the template
     }
     return render(request, 'user_detail.html', context)
+
+
+def delete_client(request, pk):
+    client_instance = get_object_or_404(Client, pk=pk)
+
+    client_instance.delete()
+
+    delete_client_slug = client_instance.slug  # Replace 'slug' with the actual identifier field
+
+    # Construct the URL for the client_detail view
+    client_detail_url = reverse('client_detail', kwargs={'slug': delete_client_slug})
+
+    return HttpResponseRedirect(client_detail_url)

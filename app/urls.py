@@ -3,6 +3,7 @@ from django.conf.urls.static import static
 from django.urls import re_path as url
 from . import views
 
+
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url("new/client", views.new_client, name="new_client"),
@@ -18,7 +19,7 @@ urlpatterns = [
     url(r'^user/(?P<id>\d+)/$', views.user_detail, name='user_detail'),
     url("logout", views.logout_request, name="logout"),
     url('mark_all_items_paid/(?P<slug>[-\w]+)/$', views.mark_all_items_paid, name='mark_all_items_paid'),
-
+    url(r'^delete/client/(?P<pk>\d+)/$', views.delete_client, name='delete_client'),
 ]
 
 if settings.DEBUG:
