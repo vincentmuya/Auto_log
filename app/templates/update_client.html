@@ -28,3 +28,16 @@
 </body>
 </html>
 {%endblock%}
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $('#id_item_quantity, #id_item_unit_price').on('input', function () {
+      var item_quantity = parseInt($('#id_item_quantity').val() || 0);
+      var item_unit_price = parseInt($('#id_item_unit_price').val() || 0);
+      var item_total_amount = item_quantity * item_unit_price;
+      $('#id_item_total_amount').val(item_total_amount);
+    });
+  });
+</script>
+{% endblock %}
