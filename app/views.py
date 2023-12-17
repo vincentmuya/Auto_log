@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, get_list_or_404, redirect, reverse
-from .forms import NewClientForm, NewUserForm, UpdateUnpaidItemsForm
+from .forms import NewClientItemForm, NewUserForm, UpdateUnpaidItemsForm
 from django.http import HttpResponseRedirect
 from .models import Client, ItemHistory, Profile, User
 from django.contrib.humanize.templatetags.humanize import intcomma
@@ -41,19 +41,12 @@ def new_client(request):
     current_user = request.user
 
     if request.method == 'POST':
-        form = NewClientForm(request.POST, request.FILES)
+        form = NewClientItemForm(request.POST)
         if form.is_valid():
-            client = form.save(commit=False)
-            client.lender = current_user
+            client_instance, item_instance = form.save(current_user)
 
-            # Calculate item_total_amount
-            item_total_amount = form.calculate_item_total_amount()
-            if item_total_amount is not None:
-                client.item_total_amount = item_total_amount
-
-            client.save()
             # Get the slug or any other identifier for the newly created client
-            new_client_slug = client.slug  # Replace 'slug' with the actual identifier field
+            new_client_slug = client_instance.slug  # Replace 'slug' with the actual identifier field
 
             # Construct the URL for the client_detail view
             client_detail_url = reverse('client_detail', kwargs={'slug': new_client_slug})
@@ -64,8 +57,8 @@ def new_client(request):
         name = unquote(request.GET.get('name', ''))  # Use unquote here
         phone_number = unquote(request.GET.get('phone_number', ''))  # Use unquote here
 
-        initial_data = {'name': name, 'phone_number': phone_number}
-        form = NewClientForm(initial=initial_data)
+        initial_data = {'client_name': name, 'client_phone_number': phone_number}
+        form = NewClientItemForm(initial=initial_data)
 
     return render(request, 'new_client.html', {"form": form})
 
@@ -193,7 +186,7 @@ def update_unpaid_items_view(request, slug):
 @login_required(login_url='/accounts/login')
 def update_client(request, pk):
     instance = get_object_or_404(Client, pk=pk)
-    form = NewClientForm(request.POST or None, instance=instance)
+    form = NewClientItemForm(request.POST or None, instance=instance)
     if form.is_valid():
         form.save()
         # Get the slug or any other identifier for the newly created client
