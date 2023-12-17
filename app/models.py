@@ -7,23 +7,17 @@ from django.db.models.signals import post_save
 
 # Create your models here.
 class Client(models.Model):
-    lender = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     slug = models.SlugField(unique=False, null=True)
     phone_number = models.IntegerField(null=True, blank=True)
-    item = models.CharField(max_length=50)
-    item_quantity = models.IntegerField(null=True, blank=True)
-    item_unit_price = models.IntegerField(null=True, blank=True)
-    item_total_amount = models.IntegerField(null=True, blank=True)
-    item_collection_date = models.DateField(null=True, blank=True)
-    is_item_paid = models.BooleanField(default=False)
+    id_number = models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
         super(Client, self).save(*args, **kwargs)
-
-    def __str__(self):
-        return self.name
 
     def get_absolute_url(self):
         return reverse('client_detail', args=[self.slug])
@@ -34,12 +28,39 @@ class Client(models.Model):
         return search_result
 
 
+class Item(models.Model):
+    lender = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    client = models.ForeignKey(Client, null=True, on_delete=models.CASCADE)
+    item = models.CharField(max_length=50)
+    slug = models.SlugField(unique=False, null=True)
+    item_quantity = models.IntegerField(null=True, blank=True)
+    item_unit_price = models.IntegerField(null=True, blank=True)
+    item_total_amount = models.IntegerField(null=True, blank=True)
+    item_collection_date = models.DateField(null=True, blank=True)
+    is_item_paid = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.item
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.item)
+        super(Item, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse('item_detail', args=[self.slug])
+
+    @classmethod
+    def search_by_name(cls, search_term):
+        search_result = cls.objects.filter(name__icontains=search_term)
+        return search_result
+
+
 class ItemHistory(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
     name = models.CharField(max_length=50, null=True, blank=True)
     slug = models.SlugField(unique=False, null=True)
     phone_number = models.IntegerField(null=True, blank=True)
-    item = models.CharField(max_length=50, null=True, blank=True)
     date_paid = models.DateField(auto_now_add=True)
     item_collection_date = models.DateField(null=True, blank=True)
     item_total_amount = models.IntegerField(null=True, blank=True)
@@ -48,16 +69,16 @@ class ItemHistory(models.Model):
         # Copy item_collection_date and item_amount from the client when saving a new record in ItemHistory
         if not self.name:
             self.name = self.client.name
+        if not self.item:
+            self.item = self.item.item
         if not self.slug:
-            self.slug = self.client.slug
+            self.slug = self.item.slug
         if not self.phone_number:
             self.phone_number = self.client.phone_number
         if not self.item_collection_date:
             self.item_collection_date = self.client.item_collection_date
         if not self.item_total_amount:
             self.item_total_amount = self.client.item_total_amount
-        if not self.item:
-            self.item = self.client.item
         super(ItemHistory, self).save(*args, **kwargs)
 
     def __str__(self):
