@@ -1,0 +1,45 @@
+{%extends 'base.html'%} {% load static %} {%block content%} {% load bootstrap5 %} {{ block.super}}
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+    <link rel="stylesheet" href="{% static 'css/new_client.css' %}">
+    <link rel="icon" href="/static/images/" type="image/gif" sizes="50x50">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Auto Log</title>
+</head>
+
+<body>
+    <div class="container">
+     <div id="card">
+        <div id="card-content">
+          <div id="card-title">
+            <h2>New Item</h2>
+            <div class="underline-title"></div>
+          </div>
+          <form method="post">
+              {% csrf_token %}
+              {% bootstrap_form form %}
+            <input id="submit-btn" type="submit" name="submit"  />
+          </form>
+    </div>
+  </div>
+    </div>
+</body>
+</html>
+{%endblock%}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $('#id_item_quantity, #id_item_unit_price').on('input', function () {
+      var item_quantity = parseInt($('#id_item_quantity').val() || 0);
+      var item_unit_price = parseInt($('#id_item_unit_price').val() || 0);
+      var item_total_amount = item_quantity * item_unit_price;
+      $('#id_item_total_amount').val(item_total_amount);
+    });
+  });
+</script>
+{% endblock %}

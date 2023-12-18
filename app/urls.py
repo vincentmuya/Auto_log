@@ -8,6 +8,7 @@ from .views import update_unpaid_items_view
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url("new/client", views.new_client, name="new_client"),
+    url("new/item", views.new_item, name="new_item"),
     url("client_list", views.client_list, name="client_list"),
     url(r'^(?P<slug>[-\w]+)/update_unpaid_items/$', update_unpaid_items_view, name='update_unpaid_items'),
     url(r'^(?P<slug>[-\w]+)/$', views.client_detail, name='client_detail'),

@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, get_list_or_404, redirect, reverse
-from .forms import NewClientItemForm, NewUserForm, UpdateUnpaidItemsForm
+from .forms import NewItemForm, NewUserForm, UpdateUnpaidItemsForm, NewClientForm
 from django.http import HttpResponseRedirect
-from .models import Client, ItemHistory, Profile, User
+from .models import Client, ItemHistory, Profile, User, Item
 from django.contrib.humanize.templatetags.humanize import intcomma
 from datetime import datetime
 from django.db.models import Count, Sum, F, DecimalField
@@ -38,29 +38,44 @@ def index(request):
 
 @login_required(login_url='/accounts/login')
 def new_client(request):
-    current_user = request.user
-
     if request.method == 'POST':
-        form = NewClientItemForm(request.POST)
+        form = NewClientForm(request.POST, request.FILES)
         if form.is_valid():
-            client_instance, item_instance = form.save(current_user)
+            client = form.save(commit=False)
 
+            client.save()
             # Get the slug or any other identifier for the newly created client
-            new_client_slug = client_instance.slug  # Replace 'slug' with the actual identifier field
+            new_client_slug = client.slug  # Replace 'slug' with the actual identifier field
 
             # Construct the URL for the client_detail view
             client_detail_url = reverse('client_detail', kwargs={'slug': new_client_slug})
 
-            return HttpResponseRedirect(client_detail_url)
-    else:
-        # Get the values from the query parameters and decode them
-        name = unquote(request.GET.get('name', ''))  # Use unquote here
-        phone_number = unquote(request.GET.get('phone_number', ''))  # Use unquote here
-
-        initial_data = {'client_name': name, 'client_phone_number': phone_number}
-        form = NewClientItemForm(initial=initial_data)
+        return HttpResponseRedirect(client_detail_url)
+    form = NewClientForm()
 
     return render(request, 'new_client.html', {"form": form})
+
+
+@login_required(login_url='/accounts/login')
+def new_item(request):
+    current_user = request.user
+    if request.method == 'POST':
+        form = NewClientForm(request.POST, request.FILES)
+        if form.is_valid():
+            item = form.save(commit=False)
+            item.lender = current_user
+
+            item.save()
+            # Get the slug or any other identifier for the newly created client
+            new_client_slug = item.client.slug  # Replace 'slug' with the actual identifier field
+
+            # Construct the URL for the client_detail view
+            client_detail_url = reverse('client_detail', kwargs={'slug': new_client_slug})
+
+        return HttpResponseRedirect('/')
+    form = NewItemForm()
+
+    return render(request, 'new_item.html', {"form": form})
 
 
 @login_required(login_url='/accounts/login')
@@ -116,6 +131,7 @@ def update_unpaid_items(client, updated_total):
 @login_required(login_url='/accounts/login')
 def client_detail(request, slug):
     clients = Client.objects.filter(slug=slug)
+    items = Item.objects.filter(slug=slug)
     history = ItemHistory.objects.filter(name__in=clients.values_list('name', flat=True))
     all_clients = Client.objects.filter(name__in=clients.values_list('name', flat=True))
 
@@ -124,10 +140,10 @@ def client_detail(request, slug):
     clients_with_item = list(all_clients.values_list('name', flat=True))
 
     # Check if all items are paid for all clients with the same slug
-    all_item_paid = all(client.is_item_paid for client in clients)
+    all_item_paid = all(item.is_item_paid for item in items)
 
     # Calculate the total of unpaid items for the client
-    unpaid_items_total = all_clients.filter(is_item_paid=False).aggregate(
+    unpaid_items_total = items.filter(is_item_paid=False).aggregate(
         total=Coalesce(Sum('item_total_amount', output_field=DecimalField()), Decimal('0')))['total']
 
     form = UpdateUnpaidItemsForm()
@@ -148,8 +164,8 @@ def client_detail(request, slug):
         unpaid_items_total += new_unpaid_item
 
     # Format the item_amount fields with commas
-    for client in all_clients:
-        client.item_total_amount = intcomma(client.item_total_amount)
+    for item in items:
+        items.item_total_amount = intcomma(items.item_total_amount)
 
     return render(request, 'client_detail.html', {
         'clients': clients,  # Pass the queryset of clients

@@ -9,20 +9,14 @@ class DateInput(forms.DateInput):
     input_type = 'date'
 
 
-class NewClientItemForm(forms.Form):
-    # Fields for Client model
-    client_name = forms.CharField(max_length=50)
-    client_phone_number = forms.IntegerField(required=False)
-    client_id_number = forms.IntegerField(required=False)
+class NewItemForm(forms.ModelForm):
 
-    # Fields for Item model
-    item_name = forms.CharField(max_length=50)
-    item_quantity = forms.IntegerField(required=False)
-    item_unit_price = forms.IntegerField(required=False)
-    item_total_amount = forms.IntegerField(required=False)
-    item_collection_date = forms.DateField(widget=DateInput(), required=False)
-
-    # Additional fields, if needed
+    class Meta:
+        model = Item
+        exclude = ["slug", "lender", "is_item_paid"]
+        widgets = {
+            'item_collection_date': DateInput(),
+        }
 
     # custom method to calculate item_total_amount
     def calculate_item_total_amount(self):
@@ -32,30 +26,13 @@ class NewClientItemForm(forms.Form):
             return item_quantity * item_unit_price
         return None
 
-    def save(self, current_user):
-        # Extract data for Client model
-        client_data = {
-            'name': self.cleaned_data['client_name'],
-            'phone_number': self.cleaned_data['client_phone_number'],
-            'id_number': self.cleaned_data['client_id_number'],
-        }
-        client_instance = Client.objects.create(**client_data)
 
-        # Extract data for Item model
-        item_data = {
-            'client': client_instance,
-            'item': self.cleaned_data['item_name'],
-            'item_quantity': self.cleaned_data['item_quantity'],
-            'item_unit_price': self.cleaned_data['item_unit_price'],
-            'item_total_amount': self.cleaned_data['item_total_amount'],
-            'item_collection_date': self.cleaned_data['item_collection_date'],
-            # Add other fields as needed
-        }
-        item_instance = Item.objects.create(lender=current_user, **item_data)
+class NewClientForm(forms.ModelForm):
 
-        # You can also perform additional actions or validations here
-
-        return client_instance, item_instance
+    class Meta:
+        model = Client
+        exclude = ["slug"]
+        widgets = {}
 
 
 class NewUserForm(UserCreationForm):
