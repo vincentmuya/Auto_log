@@ -15,135 +15,133 @@
 <body>
 
 <div class="container">
-      <div id="card-title">
+    <div id="card-title">
       <h2>Client Details</h2>
-        <div class="underline-title"></div>
-  </div>
-      <div class="row">
-        <div class="col-md-1">
-    <h1></h1>
-        </div>
-        <div class="col-md-10">
-    <div class="panel panel-default">
-      <div class="row">
-        <div class="col-md-1">
-        </div>
-        <div class="col-md-10">
-      <div class="titlebold"><strong></strong>
-      <br>
-  <div class="track-card" >
-    <br>
+      <div class="underline-title"></div>
+    </div>
     <div class="row">
-      <div class="col-md-6">
-        <div class="credentials">
-        <h3 class="titlebold"><strong>Name: {{ clients.0.name|capfirst }}</strong> </h3>
-      </div>
-      </div>
+      <div class="col-md-12">
+        <div class="panel panel-default">
+          <div class="track-card">
+            <br>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="credentials">
+                  <h3 class="titlebold"><strong>Name: {{ client.name|capfirst }}</strong></h3>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="credentials">
+                  <h3 class="titlebold"><strong>Phone Number: {{ client.phone_number }}</strong></h3>
+                </div>
+              </div>
+            </div>
+            <br>
+            <table id="customers">
+              <tr>
+                <td>
+                  <strong>
+                    <a href="">
+                      <button type="button" class="btn btn-primary" name="button">Add Item</button>
+                    </a>
+                  </strong>
+                </td>
+                <td>
+                  <strong>Unpaid: {{ unpaid_items_total|intcomma }}</strong>
+                  <button type="button" class="btn btn-success" data-toggle="modal" data-target="#updateModal">Update</button>
+                </td>
+                {% if not all_item_paid %}
+                  <td>
+                    <a href="#">
+                      <button type="button" class="btn btn-danger" name="button">Paid All</button>
+                    </a>
+                  </td>
+                {% endif %}
+              </tr>
+            </table>
+            <hr>
 
-        <div class="col-md-6">
-          <div class="credentials">
-            <h3 class="titlebold"><strong>Phone Number: {{ clients.0.phone_number }} </strong></h3>
+            {% if not items %}
+              <p>No items found for the client.</p>
+            {% else %}
+              <h4>Unpaid Items</h4>
+              {% for item in items %}
+                {% if not item.is_paid %}
+                  <table id="customers">
+                    <tr>
+                      <td><strong>Item: {{ item.item }}</strong><br></td>
+                      <td><strong>Item Unit Price: {{ item.item_unit_price|intcomma }}</strong><br></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Item Quantity: {{ item.item_quantity }}</strong><br></td>
+                      <td><strong>Total Amount: {{ item.item_total_amount|intcomma }}</strong><br></td>
+                    </tr>
+                    <tr>
+                    <td><strong>Collection Date: {{ item.item_collection_date }}</strong><br></td>
+                    </tr>
+                    <tr>
+                      <td><strong><a href=""><button type="button" class="btn btn-success" name="button">Update</button></a></strong></td>
+                      <td>
+                        <a href="{% url 'item_paid' item.pk %}">
+                          <button type="button" class="btn btn-warning" name="button">Paid</button>
+                        </a>
+                        <button type="button" class="btn btn-danger" name="button" onclick="confirmDelete({{ item.pk }})">Delete</button>
+                      </td>
+                    </tr>
+                  </table>
+                  <hr>
+                {% endif %}
+              {% endfor %}
+
+              <br>
+              <h4>Paid Items</h4>
+              {% for item in items %}
+                {% if item.is_paid %}
+                  <table id="customers">
+                    <tr>
+                      <td><strong>Item: {{ item.name }}</strong><br></td>
+                      <td><strong>Item Unit Price: {{ item.unit_price|intcomma }}</strong><br></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Item Quantity: {{ item.quantity }}</strong><br></td>
+                      <td><strong>Total Amount: {{ item.total_amount|intcomma }}</strong><br></td>
+                    </tr>
+                    <tr>
+                    <td><strong>Collection Date: {{ item.item_collection_date }}</strong><br></td>
+                    </tr>
+                  </table>
+                  <hr>
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+            <br>
           </div>
         </div>
-    </div>
-    <br>
-    <table id="customers">
-    <tr>
-    <td><strong><a href="{% url 'new_client' %}?name={{ clients.0.name|urlencode }}&phone_number={{ clients.0.phone_number|urlencode }}"><button type="button" class="btn btn-primary" name="button">AddItem</button></a></strong></td>
-    <td><strong>Unpaid: {{unpaid_items_total|intcomma}}</strong>
-          <button type="button" class="btn btn-success" data-toggle="modal" data-target="#updateModal">Update</button>
-    </td>
-      {% if not all_item_paid %}
-    <td><a href="{% url 'mark_all_items_paid' clients.0.slug %}"><button type="button" class="btn btn-danger" name="button">PaidAll</button></a></td>
-  {% endif %}
-      </tr>
-      </table>
-    <hr>
-      {% if not clients %}
-  <p>No client found for the given slug.</p>
-{% else %}
-  <ul>
-    {% for client in clients %}
-      {% if not client.is_item_paid %}
-        <table id="customers">
-          <tr>
-            <td><strong>Item: {{ client.item }}</strong><br></td>
-            <td><strong>Item Unit Price: {{ client.item_unit_price|intcomma }}</strong><br></td>
-          </tr>
-          <tr>
-            <td><strong>Item Quantity: {{ client.item_quantity }}</strong><br></td>
-            <td><strong>TotalAmount: {{ client.item_total_amount|intcomma }}</strong><br></td>
-          </tr>
-          <tr>
-            <td><strong>Collection Date: {{ client.item_collection_date }}</strong><br></td>
-          </tr>
-          <tr>
-            <td><strong><a href="{% url 'update-client' client.pk %}"><button type="button" class="btn btn-success" name="button">Update</button></a></strong></td>
-            <td><a href="{% url 'item_paid' client.slug %}"><button type="button" class="btn btn-warning" name="button">Paid</button></a>
-            <button type="button" class="btn btn-danger" name="button" onclick="confirmDelete({{ client.pk }})">Delete</button>
-            </td>
-          </tr>
-        </table>
-    <hr>
-      {% endif %}
-    {% endfor %}
-    <br>
-<h4>Paid Items</h4>
-    {% for client in clients %}
-      {% if client.is_item_paid %}
-        <table id="customers">
-          <tr>
-            <td><strong>Item: {{ client.item }}</strong><br></td>
-            <td><strong>Item Unit Price: {{ client.item_unit_price|intcomma }}</strong><br></td>
-          </tr>
-          <tr>
-            <td><strong>Item Quantity: {{ client.item_quantity }}</strong><br></td>
-            <td><strong>Total Amount: {{ client.item_total_amount|intcomma }}</strong><br></td>
-          </tr>
-        </table>
-    <hr>
-      {% endif %}
-    {% endfor %}
-  </ul>
-{% endif %}
-      <br>
-  </div>
-</div>
-  <div class="col-md-1">
-  </div>
-</div>
-  </div>
-
-  </div>
-  <div class="col-md-1">
-  <h1></h1>
-  </div>
-  </div>
-
-
-    </div>
-    </div>
-<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="updateModalLabel">Enter Unpaid Amount</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <!-- Your update form content -->
-<form method="post" action="{% url 'update_unpaid_items' slug=clients.0.slug %}">
-    {% csrf_token %}
-    <input type="text" name="updated_total" value="{{ updated_total }}">
-    <input type="hidden" name="unpaid_items_total" value="{{ unpaid_items_total }}">
-    <button type="submit" class="btn btn-primary">Update</button>
-</form>
       </div>
     </div>
   </div>
-</div>
+
+  <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updateModalLabel">Enter Unpaid Amount</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Your update form content -->
+          <form method="post" action="">
+            {% csrf_token %}
+            <input type="text" name="updated_total" value="{{ updated_total }}">
+            <input type="hidden" name="unpaid_items_total" value="{{ unpaid_items_total }}">
+            <button type="submit" class="btn btn-primary">Update</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
 {%endblock%}

@@ -42,15 +42,9 @@ def new_client(request):
         form = NewClientForm(request.POST, request.FILES)
         if form.is_valid():
             client = form.save(commit=False)
-
             client.save()
-            # Get the slug or any other identifier for the newly created client
-            new_client_slug = client.slug  # Replace 'slug' with the actual identifier field
 
-            # Construct the URL for the client_detail view
-            client_detail_url = reverse('client_detail', kwargs={'slug': new_client_slug})
-
-        return HttpResponseRedirect(client_detail_url)
+        return HttpResponseRedirect('/')
     form = NewClientForm()
 
     return render(request, 'new_client.html', {"form": form})
@@ -64,13 +58,7 @@ def new_item(request):
         if form.is_valid():
             item = form.save(commit=False)
             item.lender = current_user
-
             item.save()
-            # Get the slug or any other identifier for the newly created client
-            new_client_slug = item.client.slug  # Replace 'slug' with the actual identifier field
-
-            # Construct the URL for the client_detail view
-            client_detail_url = reverse('client_detail', kwargs={'slug': new_client_slug})
 
         return HttpResponseRedirect('/')
     form = NewItemForm()
@@ -130,54 +118,47 @@ def update_unpaid_items(client, updated_total):
 
 @login_required(login_url='/accounts/login')
 def client_detail(request, slug):
-    clients = Client.objects.filter(slug=slug)
-    items = Item.objects.filter(slug=slug)
-    history = ItemHistory.objects.filter(name__in=clients.values_list('name', flat=True))
-    all_clients = Client.objects.filter(name__in=clients.values_list('name', flat=True))
-
-    # Prepare the list of names present in ItemHistory and all Clients with the same name
-    history_names = list(history.values_list('name', flat=True))
-    clients_with_item = list(all_clients.values_list('name', flat=True))
-
-    # Check if all items are paid for all clients with the same slug
-    all_item_paid = all(item.is_item_paid for item in items)
-
+    client = get_object_or_404(Client, slug=slug)
+    items = Item.objects.filter(client=client)
     # Calculate the total of unpaid items for the client
     unpaid_items_total = items.filter(is_item_paid=False).aggregate(
         total=Coalesce(Sum('item_total_amount', output_field=DecimalField()), Decimal('0')))['total']
+    # history = ItemHistory.objects.filter(name__in=clients.values_list('name', flat=True))
+    # all_clients = Client.objects.filter(name__in=clients.values_list('name', flat=True))
+    #
+    # # Prepare the list of names present in ItemHistory and all Clients with the same name
+    # history_names = list(history.values_list('name', flat=True))
+    # clients_with_item = list(all_clients.values_list('name', flat=True))
+    #
+    # # Check if all items are paid for all clients with the same slug
+    # all_item_paid = all(item.is_item_paid for item in items)
+    #
+    # # Calculate the total of unpaid items for the client
+    # unpaid_items_total = items.filter(is_item_paid=False).aggregate(
+    #     total=Coalesce(Sum('item_total_amount', output_field=DecimalField()), Decimal('0')))['total']
+    #
+    # form = UpdateUnpaidItemsForm()
+    #
+    # updated_total = 0
+    # new_unpaid_item = Decimal('0')
+    #
+    # if request.method == 'POST':
+    #     # Assuming you have a form with the updated total in the POST data
+    #     updated_total = Decimal(request.POST.get('updated_total', '0'))
+    #     print(f"Updated Total: {updated_total}")
+    #
+    #     # Move the loop outside the calculation of unpaid_items_total
+    #     for client in clients:
+    #         new_unpaid_item = update_unpaid_items(client, updated_total)
+    #
+    #     # Update the unpaid_items_total after the changes
+    #     unpaid_items_total += new_unpaid_item
+    #
+    # # Format the item_amount fields with commas
+    # for item in items:
+    #     items.item_total_amount = intcomma(items.item_total_amount)
 
-    form = UpdateUnpaidItemsForm()
-
-    updated_total = 0
-    new_unpaid_item = Decimal('0')
-
-    if request.method == 'POST':
-        # Assuming you have a form with the updated total in the POST data
-        updated_total = Decimal(request.POST.get('updated_total', '0'))
-        print(f"Updated Total: {updated_total}")
-
-        # Move the loop outside the calculation of unpaid_items_total
-        for client in clients:
-            new_unpaid_item = update_unpaid_items(client, updated_total)
-
-        # Update the unpaid_items_total after the changes
-        unpaid_items_total += new_unpaid_item
-
-    # Format the item_amount fields with commas
-    for item in items:
-        items.item_total_amount = intcomma(items.item_total_amount)
-
-    return render(request, 'client_detail.html', {
-        'clients': clients,  # Pass the queryset of clients
-        'history': history,  # Make sure history is a queryset
-        'history_names': history_names,
-        'clients_with_item': clients_with_item,
-        'all_item_paid': all_item_paid,
-        'unpaid_items_total': unpaid_items_total,
-        'form': form,
-        'updated_total': updated_total,
-        'new_unpaid_item': new_unpaid_item,
-    })
+    return render(request, 'client_detail.html', {'client': client, 'items': items, 'unpaid_items_total': unpaid_items_total})
 
 
 @login_required(login_url='/accounts/login')
