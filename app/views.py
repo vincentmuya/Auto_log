@@ -80,11 +80,25 @@ def new_item(request):
 
 @login_required(login_url='/accounts/login')
 def client_list(request):
-    client = Client.objects.filter(is_item_paid=False)[::-1]
-    total = sum(client_obj.item_total_amount for client_obj in client)
-    for clients in client:
-        clients.item_total_amount = intcomma(clients.item_total_amount)
-    return render(request, 'client.html', {'client': client, 'total': total})
+    clients = Client.objects.all().prefetch_related('item_set')  # Fetch all clients
+
+    total = 0  # Initialize total
+
+    # Iterate over clients and their associated items
+    for client in clients:
+        # Iterate over items and filter only unpaid items
+        unpaid_items = [item for item in client.item_set.all() if not item.is_item_paid]
+
+        # Calculate the total for each client
+        client.total_amount = sum(item.item_total_amount for item in unpaid_items)
+
+        # Add the client's total to the overall total
+        total += client.total_amount
+
+        # Assign the filtered unpaid_items list back to the client
+        client.unpaid_items = unpaid_items
+
+    return render(request, 'client.html', {'clients': clients, 'total': total})
 
 
 def update_unpaid_items(client, updated_total):
