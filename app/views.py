@@ -252,14 +252,16 @@ def mark_all_items_paid(request, slug):
 @login_required(login_url='/accounts/login')
 def profile(request, username):
     user_profile = Profile.objects.filter(user_id=request.user.id)[::-1]
-    lender_list = Client.objects.filter(lender_id=request.user).order_by('item_collection_date')[::-1]
-    unpaid_clients = Client.objects.filter(lender_id=request.user, is_item_paid=False)
-    total_unpaid_balance = sum(client.item_total_amount for client in unpaid_clients)
+    # Fetch items associated with the current user and include related client information
+    lender_list = Item.objects.filter(lender_id=request.user).select_related('client').order_by('item_collection_date')[::-1]
+
+    unpaid_items = Item.objects.filter(lender_id=request.user, is_item_paid=False)
+    total_unpaid_balance = sum(item.item_total_amount for item in unpaid_items)
     client = Client.objects.all()
 
     # Format the item_amount fields with commas
-    for client in lender_list:
-        client.item_total_amount = intcomma(client.item_total_amount)
+    for item in lender_list:
+        item.item_total_amount = intcomma(item.item_total_amount)
     return render(request, "profile.html", {"user_profile": user_profile, "lender_list": lender_list,
                                             "total_unpaid_balance": intcomma(total_unpaid_balance)})
 

@@ -27,37 +27,39 @@
   <div class="col-md-11">
   <table id="clients">
   <tr>
-  <th>Name</th>
-  <th>Phone Number</th>
-  <th>Item</th>
-  <th>Amount</th>
-  <th>Collection Date</th>
-  <th>Item Status</th>
+    <th>Name</th>
+    <th>Phone Number</th>
+    <th>Item</th>
+    <th>Amount</th>
+    <th>Collection Date</th>
+    <th>Item Status</th>
   </tr>
-          <!-- Looping through lender_listlender_list   -->
-      {%for post_item in lender_list%}
-          <tr>
-            <td><a href="{{ post_item.get_absolute_url }}">{{post_item.name}}<a/></td>
-            <td>{{post_item.phone_number}}</td>
-            <td>{{post_item.item}}</td>
-            <td>{{post_item.item_total_amount}}</td>
-            <td>{{post_item.item_collection_date}}</td>
-            {%if post_item.is_item_paid %}
+
+  <!-- Looping through lender_list -->
+  {% for post_item in lender_list %}
+    <tr>
+      <td><a href="{{ post_item.client.get_absolute_url }}">{{ post_item.client.name }}</a></td>
+      <td>{{ post_item.client.phone_number }}</td>
+      <td>{{ post_item.item }}</td>
+      <td>{{ post_item.item_total_amount }}</td>
+      <td>{{ post_item.item_collection_date }}</td>
+      {% if post_item.is_item_paid %}
         <td style="color:green">Paid</td>
       {% else %}
         <td style="color:red">Unpaid</td>
-        {% endif %}
-          </tr>
-    {%endfor%}
-        <tr>
-  <th>Total Unpaid</th>
-  <th></th>
-  <th></th>
-  <th></th>
-            <th></th>
-  <th>{{ total_unpaid_balance }}</th>
+      {% endif %}
+    </tr>
+  {% endfor %}
+
+  <tr>
+    <th>Total Unpaid</th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th>{{ total_unpaid_balance }}</th>
   </tr>
-        </table>
+</table>
         </div>
         </div>
 </div>
