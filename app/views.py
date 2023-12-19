@@ -74,6 +74,7 @@ def new_item(request):
 
     return render(request, 'new_item.html', {"form": form, "client": client})
 
+
 @login_required(login_url='/accounts/login')
 def client_list(request):
     client = Client.objects.filter(is_item_paid=False)[::-1]
@@ -213,44 +214,40 @@ def search_results(request):
         return render(request, "search.html", {"message": message, "name": searched_ref})
 
 
-def item_paid(request,  slug):
-    client = get_list_or_404(Client, slug=slug)
-    if len(client) > 1:
-        # If multiple clients found, choose the first one and save it
-        client = client[0]
-    else:
-        # If only one client found, use that client for item payment
-        client = client[0]
+def item_paid(request,  pk):
+    item = get_object_or_404(Item, pk=pk)
 
     # Mark the item as paid and save
-    client.is_item_paid = True
-    client.save()
+    item.is_item_paid = True
+    item.save()
 
     # Create item history entry
-    ItemHistory.objects.create(client=client)
+    ItemHistory.objects.create(item=item)
 
     # Get the slug of the client for redirection
-    client_slug = client.slug  # Replace 'slug' with the actual identifier field
+    item_slug = item.client.slug
 
     # Construct the URL for the client_detail view
-    client_detail_url = reverse('client_detail', kwargs={'slug': client_slug})
+    client_detail_url = reverse('client_detail', kwargs={'slug': item_slug})
 
     return HttpResponseRedirect(client_detail_url)
 
 
 def mark_all_items_paid(request, slug):
-    clients = Client.objects.filter(slug=slug)
+    # Retrieve the client based on the provided slug
+    client = get_object_or_404(Client, slug=slug)
 
-    for client in clients:
-        if not client.is_item_paid:
-            client.is_item_paid = True
-            client.save()
-            # Create item history entry for each client
-            ItemHistory.objects.create(client=client)
+    items = Item.objects.filter(client=client)
 
-    client_slug = slug  # You already have the slug from the URL
+    for item in items:
+        if not item.is_item_paid:
+            item.is_item_paid = True
+            item.save()
+            # Create item history entry for each item
+            ItemHistory.objects.create(item=item)
 
-    client_detail_url = reverse('client_detail', kwargs={'slug': client_slug})
+    # Construct the URL for the client_detail view
+    client_detail_url = reverse('client_detail', kwargs={'slug': slug})
 
     return HttpResponseRedirect(client_detail_url)
 
@@ -404,14 +401,15 @@ def user_detail(request, id):
     return render(request, 'user_detail.html', context)
 
 
-def delete_client(request, pk):
-    client_instance = get_object_or_404(Client, pk=pk)
+def delete_item(request, pk):
+    item_instance = get_object_or_404(Item, pk=pk)
 
-    client_instance.delete()
+    # Save the client details for redirecting later
+    delete_item_client_slug = item_instance.client.slug
 
-    delete_client_slug = client_instance.slug  # Replace 'slug' with the actual identifier field
+    item_instance.delete()
 
     # Construct the URL for the client_detail view
-    client_detail_url = reverse('client_detail', kwargs={'slug': delete_client_slug})
+    client_detail_url = reverse('client_detail', kwargs={'slug': delete_item_client_slug})
 
     return HttpResponseRedirect(client_detail_url)

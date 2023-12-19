@@ -14,7 +14,7 @@ urlpatterns = [
     url(r'^(?P<slug>[-\w]+)/$', views.client_detail, name='client_detail'),
     url(r'^update/item/(?P<pk>\d+)/$', views.update_item, name='update-item'),
     url(r'^search$', views.search_results, name='search_results'),
-    url('item_paid/(?P<slug>[-\w]+)/$', views.item_paid, name='item_paid'),
+    url('item_paid/(?P<pk>\d+)/$', views.item_paid, name='item_paid'),
     url(r'^profile/(?P<username>[\w\-]+)/$', views.profile, name='profile'),
     url("login", views.login_request, name="login"),
     url("register", views.register_request, name="register"),
@@ -22,7 +22,7 @@ urlpatterns = [
     url(r'^user/(?P<id>\d+)/$', views.user_detail, name='user_detail'),
     url("logout", views.logout_request, name="logout"),
     url('mark_all_items_paid/(?P<slug>[-\w]+)/$', views.mark_all_items_paid, name='mark_all_items_paid'),
-    url(r'^delete/client/(?P<pk>\d+)/$', views.delete_client, name='delete_client'),
+    url(r'^delete/item/(?P<pk>\d+)/$', views.delete_item, name='delete_item'),
 
 ]
 

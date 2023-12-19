@@ -52,7 +52,7 @@
                 </td>
                 {% if not all_item_paid %}
                   <td>
-                    <a href="#">
+                    <a href="{% url 'mark_all_items_paid' client.slug %}">
                       <button type="button" class="btn btn-danger" name="button">Paid All</button>
                     </a>
                   </td>
@@ -66,7 +66,7 @@
             {% else %}
               <h4>Unpaid Items</h4>
               {% for item in items %}
-                {% if not item.is_paid %}
+                {% if not item.is_item_paid %}
                   <table id="customers">
                     <tr>
                       <td><strong>Item: {{ item.item }}</strong><br></td>
@@ -83,7 +83,7 @@
                       <td><strong><a href="{% url 'update-item' item.pk %}"><button type="button" class="btn btn-success" name="button">Update</button></a></strong></td>
                       <td>
                         <a href="{% url 'item_paid' item.pk %}">
-                          <button type="button" class="btn btn-warning" name="button">Paid</button>
+                        <button type="button" class="btn btn-warning" name="button">Paid</button>
                         </a>
                         <button type="button" class="btn btn-danger" name="button" onclick="confirmDelete({{ item.pk }})">Delete</button>
                       </td>
@@ -96,10 +96,10 @@
               <br>
               <h4>Paid Items</h4>
               {% for item in items %}
-                {% if item.is_paid %}
+                {% if item.is_item_paid %}
                   <table id="customers">
                     <tr>
-                      <td><strong>Item: {{ item.name }}</strong><br></td>
+                      <td><strong>Item: {{ item.item }}</strong><br></td>
                       <td><strong>Item Unit Price: {{ item.unit_price|intcomma }}</strong><br></td>
                     </tr>
                     <tr>
@@ -149,10 +149,10 @@
 {% block scripts %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    function confirmDelete(clientId) {
-        if (confirm("Are you sure you want to delete this item?")) {
-            window.location.href = "{% url 'delete_client' 0 %}".replace('0', clientId);
-        }
+function confirmDelete(itemId) {
+    if (confirm("Are you sure you want to delete this item?")) {
+        window.location.href = "{% url 'delete_item' 0 %}".replace('0', itemId);
     }
+}
 </script>
 {% endblock %}
