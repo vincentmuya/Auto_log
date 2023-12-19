@@ -125,18 +125,18 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="updateModalLabel">Enter Unpaid Amount</h5>
+          <h5 class="modal-title" id="updateModalLabel">Enter Paid Amount</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
           <!-- Your update form content -->
-          <form method="post" action="">
-            {% csrf_token %}
-            <input type="text" name="updated_total" value="{{ updated_total }}">
-            <input type="hidden" name="unpaid_items_total" value="{{ unpaid_items_total }}">
-            <button type="submit" class="btn btn-primary">Update</button>
+          <form method="post" action="{% url 'update_unpaid_items' slug=client.slug %}">
+             {% csrf_token %}
+             <input type="text" name="updated_total" value="{{ updated_total }}">
+             <input type="hidden" name="unpaid_items_total" value="{{ unpaid_items_total }}">
+             <button type="submit" class="btn btn-primary">Update</button>
           </form>
         </div>
       </div>

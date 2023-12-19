@@ -67,7 +67,10 @@ def new_item(request):
             item.client = client  # Set the client for the new item
             item.save()
 
-            return HttpResponseRedirect('/')
+            # Construct the URL for the client_detail view
+            client_detail_url = reverse('client_detail', kwargs={'slug': client_slug})
+
+            return HttpResponseRedirect(client_detail_url)
     else:
         # Create a form instance with the initial client data
         form = NewItemForm(initial={'client': client})
@@ -85,44 +88,25 @@ def client_list(request):
 
 
 def update_unpaid_items(client, updated_total):
-    # Use transaction.atomic() to ensure the entire operation is atomic
     with transaction.atomic():
-        unpaid_items = Client.objects.filter(slug=client.slug, is_item_paid=False)
+        unpaid_items = Item.objects.filter(client=client, is_item_paid=False).order_by('item_collection_date')
 
-        current_total = unpaid_items.aggregate(
-            total=models.Sum('item_total_amount', output_field=models.DecimalField())
-        )['total'] or Decimal('0')
-        print(f"Current Total: {current_total}")
-        print(f"Updated Total 1: {updated_total}")
-
-        difference = current_total - updated_total
-        print(f"Difference: {difference}")
-
-        if difference > 0:
-            # Deduct the amount from unpaid items matching the client's slug
-            for item in unpaid_items.order_by('item_collection_date'):
-                if item.item_total_amount > difference:
-                    # If the item has more amount than needed, deduct the difference and break
-                    item.item_total_amount -= difference
-                    print(f"Item 1: {item}")
-
-                    item.save()
-                    break
-                else:
-                    # If the item amount is less than or equal to the difference, deduct the item amount
-                    difference -= item.item_total_amount
+        for item in unpaid_items:
+            if updated_total > 0:
+                if item.item_total_amount <= updated_total:
+                    # If the item amount is less than or equal to the remaining amount, deduct the item amount
+                    updated_total -= item.item_total_amount
                     item.item_total_amount = Decimal('0')
-                    print(f"Item 2: {item}")
-
                     item.is_item_paid = True
                     item.save()
+                else:
+                    # If the item has more amount than needed, deduct the remaining amount and break
+                    item.item_total_amount -= updated_total
+                    item.save()
+                    break
 
-            # Return the deducted amount
-            print(f"Updated Total 2: {updated_total}")
-            return updated_total
-
-    # If no deduction was made, return 0
-    return Decimal('0')
+        # Return the deducted amount
+        return updated_total
 
 
 @login_required(login_url='/accounts/login')
@@ -177,10 +161,9 @@ def update_unpaid_items_view(request, slug):
         print(f"update_unpaid_items_view called with slug: {slug}")
         print(f"Updated Total in POST: {updated_total}")
 
-        clients = Client.objects.filter(slug=slug)
-        client = clients.first()
+        client = get_object_or_404(Client, slug=slug)
 
-        unpaid_items_total = Client.objects.filter(slug=slug, is_item_paid=False).aggregate(
+        unpaid_items_total = Item.objects.filter(client=client, is_item_paid=False).aggregate(
             total=Coalesce(Sum('item_total_amount', output_field=DecimalField()), Decimal('0')))['total']
 
         new_unpaid_item_amount = update_unpaid_items(client, updated_total)
