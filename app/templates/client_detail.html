@@ -41,7 +41,7 @@
               <tr>
                 <td>
                   <strong>
-                    <a href="">
+                    <a href="{% url 'new_item' %}?client_id={{ client.id }}&client_slug={{ client.slug }}">
                       <button type="button" class="btn btn-primary" name="button">Add Item</button>
                     </a>
                   </strong>
@@ -80,7 +80,7 @@
                     <td><strong>Collection Date: {{ item.item_collection_date }}</strong><br></td>
                     </tr>
                     <tr>
-                      <td><strong><a href=""><button type="button" class="btn btn-success" name="button">Update</button></a></strong></td>
+                      <td><strong><a href="{% url 'update-item' item.pk %}"><button type="button" class="btn btn-success" name="button">Update</button></a></strong></td>
                       <td>
                         <a href="{% url 'item_paid' item.pk %}">
                           <button type="button" class="btn btn-warning" name="button">Paid</button>

@@ -53,18 +53,26 @@ def new_client(request):
 @login_required(login_url='/accounts/login')
 def new_item(request):
     current_user = request.user
+    client_id = request.GET.get('client_id')
+    client_slug = request.GET.get('client_slug')
+
+    # Retrieve the client based on the provided ID and slug
+    client = get_object_or_404(Client, id=client_id, slug=client_slug)
+
     if request.method == 'POST':
-        form = NewClientForm(request.POST, request.FILES)
+        form = NewItemForm(request.POST, request.FILES)
         if form.is_valid():
             item = form.save(commit=False)
             item.lender = current_user
+            item.client = client  # Set the client for the new item
             item.save()
 
-        return HttpResponseRedirect('/')
-    form = NewItemForm()
+            return HttpResponseRedirect('/')
+    else:
+        # Create a form instance with the initial client data
+        form = NewItemForm(initial={'client': client})
 
-    return render(request, 'new_item.html', {"form": form})
-
+    return render(request, 'new_item.html', {"form": form, "client": client})
 
 @login_required(login_url='/accounts/login')
 def client_list(request):
@@ -181,16 +189,16 @@ def update_unpaid_items_view(request, slug):
 
 
 @login_required(login_url='/accounts/login')
-def update_client(request, pk):
-    instance = get_object_or_404(Client, pk=pk)
-    form = NewClientItemForm(request.POST or None, instance=instance)
+def update_item(request, pk):
+    instance = get_object_or_404(Item, pk=pk)
+    form = NewItemForm(request.POST or None, instance=instance)
     if form.is_valid():
         form.save()
         # Get the slug or any other identifier for the newly created client
-        update_client_slug = instance.slug  # Replace 'slug' with the actual identifier field
+        update_item_slug = instance.slug  # Replace 'slug' with the actual identifier field
 
         # Construct the URL for the client_detail view
-        client_detail_url = reverse('client_detail', kwargs={'slug': update_client_slug})
+        client_detail_url = reverse('client_detail', kwargs={'slug': update_item_slug})
 
         return HttpResponseRedirect(client_detail_url)
     return render(request, 'update_client.html', {'form': form})
