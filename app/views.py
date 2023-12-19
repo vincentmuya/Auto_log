@@ -44,11 +44,18 @@ def new_client(request):
             client = form.save(commit=False)
             client.save()
 
-        return HttpResponseRedirect('/')
-    form = NewClientForm()
+            # Get the slug from the form details
+            client_slug = client.slug  # Replace 'slug' with the actual identifier field
+
+            # Construct the URL for the client_detail view
+            client_detail_url = reverse('client_detail', kwargs={'slug': client_slug})
+
+            # Redirect to the client detail page
+            return HttpResponseRedirect(client_detail_url)
+    else:
+        form = NewClientForm()
 
     return render(request, 'new_client.html', {"form": form})
-
 
 @login_required(login_url='/accounts/login')
 def new_item(request):
