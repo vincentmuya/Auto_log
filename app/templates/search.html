@@ -51,44 +51,37 @@
             {% else %}
             <table id="customers">
                               <div class="row">
-      <div class="col-md-6">
+      <div class="col-md-3">
         <div class="credentials">
         <h3 class="titlebold"><strong>Name: <a href="{{ result.get_absolute_url }}">{{ result.name|capfirst }}</a></strong> </h3>
       </div>
       </div>
 
-        <div class="col-md-6">
+        <div class="col-md-3">
           <div class="credentials">
             <h3 class="titlebold"><strong>Phone Number: {{ result.phone_number }} </strong></h3>
           </div>
         </div>
-    </div>
-          <tr>
-            <td><strong>Item: {{ result.item }}</strong><br></td>
-            <td><strong>Item Unit Price: {{ result.item_unit_price|intcomma }}</strong><br></td>
-          </tr>
-          <tr>
-            <td><strong>Item Quantity: {{ result.item_quantity }}</strong><br></td>
-            <td><strong>TotalAmount: {{ result.item_total_amount|intcomma }}</strong><br></td>
-          </tr>
-          <tr>
-            <td><strong>Collection Date: {{ result.item_collection_date }}</strong><br></td>
-              <td><strong>Status: UnPaid</strong><br></td>
-          </tr>
-          <tr>
-            <td><strong><a href="{% url 'update-client' result.pk %}"><button type="button" class="btn btn-success" name="button">Update Details</button></a></strong></td>
-            <td><a href="{% url 'item_paid' result.slug %}"><button type="button" class="btn btn-danger" name="button">Paid</button></a></td>
-          <td><strong><a href="{% url 'new_client' %}?name={{ result.name|urlencode }}&phone_number={{ result.phone_number|urlencode }}"><button type="button" class="btn btn-primary" name="button"> Add Item</button></a></strong><br></td>
-
-          </tr>
-        </table>
-    <hr>
-      {% endif %}
+          <div class="col-md-3">
+          <div class="credentials">
+            <h3 class="titlebold"><strong>ID Number: {{ result.id_number }} </strong></h3>
+          </div>
+        </div>
+          {% endif %}
      {% endfor %}
+      <div class="col-md-3">
+          <div class="credentials">
+            <h3 class="titlebold"><strong>Unpaid Amount: {{ unpaid_items_total|intcomma }} </strong></h3>
+          </div>
+        </div>
+    </div>
+
+
 
 {% else %}
 <h2>No Results of searched term {{message}}</h2>
 {% endif %}
+
 </div>
 </body>
 </html>

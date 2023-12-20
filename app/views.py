@@ -15,6 +15,7 @@ from urllib.parse import unquote  # Import unquote from urllib.parse
 from decimal import Decimal
 from django.db.models.functions import Coalesce
 from django.db import transaction, models
+from django.db.models import Q
 
 
 # Create your views here.
@@ -214,9 +215,26 @@ def update_item(request, pk):
 def search_results(request):
     if 'name' in request.GET and request.GET["name"]:
         search_term = request.GET.get("name")
-        searched_ref = Client.search_by_name(search_term)
+        searched_clients = Client.objects.filter(Q(name__icontains=search_term) | Q(id_number__icontains=search_term))
+
+        # Create a list to store results along with unpaid items total
+        results_with_unpaid = []
+
+        for client in searched_clients:
+            items = Item.objects.filter(client=client)
+
+            # Calculate the total of unpaid items for the client
+            unpaid_items_total = items.filter(is_item_paid=False).aggregate(
+                total=Coalesce(Sum('item_total_amount', output_field=DecimalField()), Decimal('0')))['total']
+
+            # Append the client and total unpaid items to the results list
+            results_with_unpaid.append({
+                'client': client,
+                'unpaid_items_total': unpaid_items_total,
+            })
+
         message = f"{search_term}"
-        return render(request, "search.html", {"message": message, "name": searched_ref})
+        return render(request, "search.html", {"message": message, "name": searched_clients, "unpaid_items_total": unpaid_items_total, "results_with_unpaid": results_with_unpaid})
 
 
 def item_paid(request,  pk):
