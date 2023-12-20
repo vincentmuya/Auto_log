@@ -91,23 +91,18 @@ def new_item(request):
 def client_list(request):
     clients = Client.objects.all().prefetch_related('item_set')  # Fetch all clients
 
-    total = 0  # Initialize total
-
-    # Iterate over clients and their associated items
     for client in clients:
-        # Iterate over items and filter only unpaid items
-        unpaid_items = [item for item in client.item_set.all() if not item.is_item_paid]
+        items = Item.objects.filter(client=client)
 
-        # Calculate the total for each client
-        client.total_amount = sum(item.item_total_amount for item in unpaid_items)
+        # Calculate the total of unpaid items for the client
+        unpaid_items_total = items.filter(is_item_paid=False).aggregate(
+            total=Coalesce(Sum('item_total_amount', output_field=DecimalField()), Decimal('0'))
+        )['total']
 
-        # Add the client's total to the overall total
-        total += client.total_amount
+        # Assign the calculated unpaid_items_total directly to the client instance
+        client.unpaid_items_total = unpaid_items_total
 
-        # Assign the filtered unpaid_items list back to the client
-        client.unpaid_items = unpaid_items
-
-    return render(request, 'client.html', {'clients': clients, 'total': total})
+    return render(request, 'client.html', {'clients': clients})
 
 
 def update_unpaid_items(client, updated_total):
@@ -217,9 +212,6 @@ def search_results(request):
         search_term = request.GET.get("name")
         searched_clients = Client.objects.filter(Q(name__icontains=search_term) | Q(id_number__icontains=search_term))
 
-        # Create a list to store results along with unpaid items total
-        results_with_unpaid = []
-
         for client in searched_clients:
             items = Item.objects.filter(client=client)
 
@@ -227,14 +219,8 @@ def search_results(request):
             unpaid_items_total = items.filter(is_item_paid=False).aggregate(
                 total=Coalesce(Sum('item_total_amount', output_field=DecimalField()), Decimal('0')))['total']
 
-            # Append the client and total unpaid items to the results list
-            results_with_unpaid.append({
-                'client': client,
-                'unpaid_items_total': unpaid_items_total,
-            })
-
         message = f"{search_term}"
-        return render(request, "search.html", {"message": message, "name": searched_clients, "unpaid_items_total": unpaid_items_total, "results_with_unpaid": results_with_unpaid})
+        return render(request, "search.html", {"message": message, "name": searched_clients, "unpaid_items_total": unpaid_items_total})
 
 
 def item_paid(request,  pk):

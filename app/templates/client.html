@@ -26,31 +26,23 @@
     <tr>
         <th>Name</th>
         <th>Phone Number</th>
-        <th>Item</th>
-        <th>Quantity</th>
-        <th>Amount</th>
-        <th>Collection date:</th>
+        <th>ID</th>
+        <th>Unpaid Amount</th>
     </tr>
-    <!-- Looping through clients and their unpaid items -->
 {% for client in clients %}
-    {% for item in client.unpaid_items %}
-        <tr>
-            <td><a href="{{ client.get_absolute_url }}">{{ client.name }}</a></td>
-            <td>{{ client.phone_number }}</td>
-            <td>{{ item.item }}</td>
-            <td>{{ item.item_quantity }}</td>
-            <td>{{ item.item_total_amount|intcomma }}</td>
-            <td>{{ item.item_collection_date }}</td>
-        </tr>
-    {% endfor %}
-{% endfor %}
     <tr>
-        <th>Total</th>
+        <td><a href="{{ client.get_absolute_url }}">{{ client.name }}</a></td>
+        <td>{{ client.phone_number }}</td>
+        <td>{{ client.id_number }}</td>
+        <td>{{ client.unpaid_items_total|intcomma }}</td>
+    </tr>
+{% endfor %}
+
+    <tr>
         <th></th>
         <th></th>
         <th></th>
         <th></th>
-        <th>KSH{{ total|intcomma }}/=</th>
     </tr>
 </table>
         </div>
