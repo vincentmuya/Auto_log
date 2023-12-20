@@ -20,15 +20,15 @@ from django.db import transaction, models
 # Create your views here.
 @login_required(login_url='/accounts/login')
 def index(request):
-    items_by_user = Client.objects.filter(lender_id=request.user)
+    items_by_user = Item.objects.filter(lender_id=request.user)
     total_by_user = sum(client.item_total_amount for client in items_by_user)
-    unpaid_clients = Client.objects.filter(lender_id=request.user, is_item_paid=False)
-    paid_clients = Client.objects.filter(lender_id=request.user, is_item_paid=True)
+    unpaid_clients = Item.objects.filter(lender_id=request.user, is_item_paid=False)
+    paid_clients = Item.objects.filter(lender_id=request.user, is_item_paid=True)
     total_paid_balance = sum(client.item_total_amount for client in paid_clients)
     total_unpaid_balance = sum(client.item_total_amount for client in unpaid_clients)
-    items_number_by_user = Client.objects.filter(lender_id=request.user).count
-    unpaid_items_by_user = Client.objects.filter(lender_id=request.user, is_item_paid=False).count
-    paid_items_by_user = Client.objects.filter(lender_id=request.user, is_item_paid=True).count
+    items_number_by_user = Item.objects.filter(lender_id=request.user).count
+    unpaid_items_by_user = Item.objects.filter(lender_id=request.user, is_item_paid=False).count
+    paid_items_by_user = Item.objects.filter(lender_id=request.user, is_item_paid=True).count
     total_item_amount = current_month_items_amount(request)
     total_item_amount_users = monthly_item_stats(request)
     today = datetime.now()
@@ -56,6 +56,7 @@ def new_client(request):
         form = NewClientForm()
 
     return render(request, 'new_client.html', {"form": form})
+
 
 @login_required(login_url='/accounts/login')
 def new_item(request):
@@ -278,7 +279,7 @@ def current_month_items_amount(request):
     today = datetime.now()
 
     # Filter items for the current month
-    items_this_month = Client.objects.filter(item_collection_date__month=today.month, item_collection_date__year=today.year)
+    items_this_month = Item.objects.filter(item_collection_date__month=today.month, item_collection_date__year=today.year)
 
     # Calculate the sum of item amounts
     total_item_amount_monthly = items_this_month.aggregate(Sum('item_total_amount'))['item_total_amount__sum']
@@ -291,19 +292,15 @@ def current_month_items_amount(request):
 
 def monthly_item_stats(request):
     # Calculate total item balance given monthly
-    monthly_item_balance = Client.objects.annotate(
-        year_month=TruncMonth('item_collection_date')
-    ).values('year_month').annotate(
-        total_balance=Sum('item_total_amount')
-    )
+    monthly_item_balance = Item.objects.annotate(year_month=TruncMonth('item_collection_date')).values('year_month').annotate(total_balance=Sum('item_total_amount'))
 
     # Calculate paid items amount
-    paid_items_amount = Client.objects.filter(is_item_paid=True).aggregate(
+    paid_items_amount = Item.objects.filter(is_item_paid=True).aggregate(
         total_paid=Sum('item_total_amount')
     )['total_paid']
 
     # Calculate unpaid items balance
-    unpaid_item_balance = Client.objects.filter(is_item_paid=False).aggregate(
+    unpaid_item_balance = Item.objects.filter(is_item_paid=False).aggregate(
         total_unpaid_balance=Sum('item_total_amount')
     )['total_unpaid_balance']
 
