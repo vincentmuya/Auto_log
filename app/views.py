@@ -356,12 +356,12 @@ def registered_users(request):
     user_stats = []
 
     for user in users_in_db:
-        items_given = Client.objects.filter(lender=user)
-        total_items_given = sum(client.item_total_amount for client in items_given)
+        items_given = Item.objects.filter(lender=user)
+        total_items_given = sum(item.item_total_amount for item in items_given)
         paid_items = items_given.filter(is_item_paid=True)
-        paid_items = sum(client.item_total_amount for client in paid_items)
+        paid_items = sum(item.item_total_amount for item in paid_items)
         unpaid_items = items_given.filter(is_item_paid=False)
-        unpaid_items = sum(client.item_total_amount for client in unpaid_items)
+        unpaid_items = sum(item.item_total_amount for item in unpaid_items)
 
         user_stat = {
             'user': user,
@@ -377,12 +377,12 @@ def registered_users(request):
 def user_detail(request, id):
     user_info = get_object_or_404(User, id=id)
 
-    items_given = Client.objects.filter(lender=user_info)
-    total_items_given = sum(client.item_total_amount for client in items_given)
+    items_given = Item.objects.filter(lender=user_info)
+    total_items_given = sum(item.item_total_amount for item in items_given)
     total_paid_items = items_given.filter(is_item_paid=True)
-    total_paid_amount = sum(client.item_total_amount for client in total_paid_items)
+    total_paid_amount = sum(item.item_total_amount for item in total_paid_items)
     total_unpaid_items = items_given.filter(is_item_paid=False)
-    total_unpaid_amount = sum(client.item_total_amount for client in total_unpaid_items)
+    total_unpaid_amount = sum(item.item_total_amount for item in total_unpaid_items)
 
     # Annotate items with year and month information
     items_given = items_given.annotate(
