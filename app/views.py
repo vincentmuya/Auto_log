@@ -283,7 +283,7 @@ def current_month_items_amount(request):
     today = datetime.now()
 
     # Filter items for the current month
-    items_this_month = Item.objects.filter(item_collection_date__month=today.month, item_collection_date__year=today.year)
+    items_this_month = Item.objects.filter(item_collection_date__month=today.month, item_collection_date__year=today.year, lender=request.user)
 
     # Calculate the sum of item amounts
     total_item_amount_monthly = items_this_month.aggregate(Sum('item_total_amount'))['item_total_amount__sum']
@@ -342,7 +342,7 @@ def register_request(request):
             user = form.save()
             login(request, user)
             messages.success(request, "Registration successful." )
-            return redirect("/home")
+            return redirect("/users")
         messages.error(request, "Unsuccessful registration. Invalid information.")
     form = NewUserForm()
     return render(request, 'registration/register.html', {'form': form})

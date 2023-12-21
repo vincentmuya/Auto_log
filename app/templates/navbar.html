@@ -24,12 +24,10 @@
         </li>
         {% endif %}
       </ul>
-      {% if user.is_authenticated and user.is_superuser %}
     <form class="form-inline my-2 my-lg-0" role="search" action="{% url 'search_results' %}">
       <input class="form-control mr-sm-2" type="search" placeholder="Search" class="form-control" name="name" aria-label="Search">
       <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
     </form>
-    {% endif %}
     </div>
   </div>
 </nav>
