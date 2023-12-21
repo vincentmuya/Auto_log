@@ -30,7 +30,7 @@ class Client(models.Model):
 
 class Item(models.Model):
     lender = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
-    client = models.ForeignKey(Client, null=True, on_delete=models.CASCADE)
+    client = models.ForeignKey(Client, related_name='items', null=True, on_delete=models.CASCADE)
     item = models.CharField(max_length=50)
     slug = models.SlugField(unique=False, null=True)
     item_quantity = models.IntegerField(null=True, blank=True)

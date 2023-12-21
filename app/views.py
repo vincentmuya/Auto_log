@@ -89,7 +89,7 @@ def new_item(request):
 
 @login_required(login_url='/accounts/login')
 def client_list(request):
-    clients = Client.objects.all().prefetch_related('item_set')  # Fetch all clients
+    clients = Client.objects.all().prefetch_related('items')  # Fetch all clients
 
     for client in clients:
         items = Item.objects.filter(client=client)
@@ -420,3 +420,17 @@ def delete_item(request, pk):
     client_detail_url = reverse('client_detail', kwargs={'slug': delete_item_client_slug})
 
     return HttpResponseRedirect(client_detail_url)
+
+
+def delete_client(request, slug):
+    # Get the client instance
+    client = get_object_or_404(Client, slug=slug)
+
+    # Delete all items related to the client
+    client.items.all().delete()
+
+    # Delete the client
+    client.delete()
+
+    # Redirect to a success page or another appropriate view
+    return redirect('/client_list')

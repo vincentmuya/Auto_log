@@ -57,10 +57,13 @@
                 {% if not all_item_paid %}
                   <td>
                     <a href="{% url 'mark_all_items_paid' client.slug %}">
-                      <button type="button" class="btn btn-danger" name="button">Paid All</button>
+                      <button type="button" class="btn btn-warning" name="button">Paid All</button>
                     </a>
                   </td>
                 {% endif %}
+                <td>
+                  <button type="button" class="btn btn-danger" name="button" onclick="confirmDeleteClient('{{ client.slug }}')">Delete Client</button>
+                </td>
               </tr>
             </table>
             <hr>
@@ -156,6 +159,15 @@
 function confirmDelete(itemId) {
     if (confirm("Are you sure you want to delete this item?")) {
         window.location.href = "{% url 'delete_item' 0 %}".replace('0', itemId);
+    }
+}
+function confirmDeleteClient(clientslug) {
+    console.log("Function called with slug:", clientslug);
+
+    if (confirm("Are you sure you want to delete this Client? All Items Related To Client Will Be Deleted")) {
+        var deleteUrl = "{% url 'delete_client' slug='0' %}".replace('0', clientslug);
+        console.log("Generated URL:", deleteUrl);
+        window.location.href = deleteUrl;
     }
 }
 </script>
