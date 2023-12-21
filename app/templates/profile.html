@@ -1,4 +1,4 @@
-{%extends 'base.html'%} {% load static %} {%block content%} {% load bootstrap5 %} {{ block.super}}
+{%extends 'base.html'%} {% load static %} {%block content%} {% load bootstrap5 %} {{ block.super}} {% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
 <title>Auto Log</title>
@@ -11,16 +11,16 @@
 
 <body>
 <div class="container">
-      {%for profile in user_profile%}
+<div class="container">
         <div id="card-content">
         <div id="card-title">
-        <h2>Logged In As {{profile.user}}</h2>
+        <h2>Logged In As {{user_profile.user}}</h2>
         <div class="underline-title"></div>
         <br>
-          <h4>Items Given By {{profile.user}}</h4>
+          <h4>{{user_profile.user|capfirst}} Profile, Client's Given</h4>
         <div class="underline-title"></div>
         </div>
-      {%endfor%}
+
             <div class="row">
     <div class="col-md-1">
     </div>
@@ -29,35 +29,28 @@
   <tr>
     <th>Name</th>
     <th>Phone Number</th>
-    <th>Item</th>
-    <th>Amount</th>
-    <th>Collection Date</th>
-    <th>Item Status</th>
+    <th>ID Number</th>
+    <th>Unpaid Amount</th>
   </tr>
+      <br>
 
   <!-- Looping through lender_list -->
-  {% for post_item in lender_list %}
-    <tr>
-      <td><a href="{{ post_item.client.get_absolute_url }}">{{ post_item.client.name }}</a></td>
-      <td>{{ post_item.client.phone_number }}</td>
-      <td>{{ post_item.item }}</td>
-      <td>{{ post_item.item_total_amount }}</td>
-      <td>{{ post_item.item_collection_date }}</td>
-      {% if post_item.is_item_paid %}
-        <td style="color:green">Paid</td>
-      {% else %}
-        <td style="color:red">Unpaid</td>
-      {% endif %}
-    </tr>
-  {% endfor %}
+{% for client in lender_clients %}
+   <tr>
+      <td><a href="{{ client.get_absolute_url }}">{{ client.name }}</a></td>
+      <td>{{ client.phone_number }}</td>
+      <td>{{ client.id_number }}</td>
+      <td>{{ client.unpaid_items_total|intcomma}}
+      </td>
+   </tr>
+{% endfor %}
+
 
   <tr>
     <th>Total Unpaid</th>
     <th></th>
     <th></th>
-    <th></th>
-    <th></th>
-    <th>{{ total_unpaid_balance }}</th>
+    <th>{{ unpaid_total_amount|intcomma }}</th>
   </tr>
 </table>
         </div>

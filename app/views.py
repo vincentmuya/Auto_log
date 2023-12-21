@@ -197,7 +197,7 @@ def update_item(request, pk):
     if form.is_valid():
         form.save()
         # Get the slug or any other identifier for the newly created client
-        update_item_slug = instance.slug  # Replace 'slug' with the actual identifier field
+        update_item_slug = instance.client.slug  # Replace 'slug' with the actual identifier field
 
         # Construct the URL for the client_detail view
         client_detail_url = reverse('client_detail', kwargs={'slug': update_item_slug})
@@ -263,19 +263,38 @@ def mark_all_items_paid(request, slug):
 
 @login_required(login_url='/accounts/login')
 def profile(request, username):
-    user_profile = Profile.objects.filter(user_id=request.user.id)[::-1]
-    # Fetch items associated with the current user and include related client information
-    lender_list = Item.objects.filter(lender_id=request.user).select_related('client').order_by('item_collection_date')[::-1]
+    user_profile = get_object_or_404(Profile, user=request.user)
 
-    unpaid_items = Item.objects.filter(lender_id=request.user, is_item_paid=False)
-    total_unpaid_balance = sum(item.item_total_amount for item in unpaid_items)
-    client = Client.objects.all()
+    # Fetch clients associated with the current user as a lender
+    lender_clients = Client.objects.filter(items__lender=request.user).distinct()
+
+    # Fetch items associated with the current user as a lender and include related client information
+    lender_list = Item.objects.filter(lender=request.user).select_related('client').order_by('item_collection_date')[::-1]
 
     # Format the item_amount fields with commas
     for item in lender_list:
         item.item_total_amount = intcomma(item.item_total_amount)
-    return render(request, "profile.html", {"user_profile": user_profile, "lender_list": lender_list,
-                                            "total_unpaid_balance": intcomma(total_unpaid_balance)})
+
+    # Initialize the unpaid_total_amount to Decimal('0')
+    unpaid_total_amount = Decimal('0')
+
+    # Fetch unpaid items for each client and calculate the total
+    for client in lender_clients:
+        items_for_client = Item.objects.filter(lender=request.user, client=client, is_item_paid=False)
+        unpaid_items_total = items_for_client.aggregate(
+            total=Coalesce(Sum('item_total_amount', output_field=DecimalField()), Decimal('0'))
+        )['total']
+        client.unpaid_items_total = unpaid_items_total
+
+        # Accumulate the unpaid_items_total directly
+        unpaid_total_amount += unpaid_items_total
+
+    return render(request, "profile.html", {
+        "user_profile": user_profile,
+        "lender_list": lender_list,
+        "lender_clients": lender_clients,
+        "unpaid_total_amount": unpaid_total_amount,
+    })
 
 
 def current_month_items_amount(request):
@@ -342,7 +361,7 @@ def register_request(request):
             user = form.save()
             login(request, user)
             messages.success(request, "Registration successful." )
-            return redirect("/users")
+            return redirect("/")
         messages.error(request, "Unsuccessful registration. Invalid information.")
     form = NewUserForm()
     return render(request, 'registration/register.html', {'form': form})
