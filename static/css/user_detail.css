@@ -60,6 +60,28 @@ font-weight: 600;
   margin: -1.1rem auto 0 auto;
   width: 200px;
 }
+#clients {
+font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+border-collapse: collapse;
+width: 100%;
+}
+
+#clients td, #customers th {
+border: 1px solid #ddd;
+padding: 8px;
+}
+
+#clients tr:nth-child(even){background-color: #f2f2f2;}
+
+#clients tr:hover {background-color: #ddd;}
+
+#clients th {
+padding-top: 12px;
+padding-bottom: 12px;
+text-align: left;
+background-color: black;
+color: white;
+}
 @media screen and (max-width: 650px) {
 .track-card{
   width: 21rem;

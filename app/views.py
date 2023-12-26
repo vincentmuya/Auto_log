@@ -401,6 +401,19 @@ def user_detail(request, id):
     user_info = get_object_or_404(User, id=id)
 
     items_given = Item.objects.filter(lender=user_info)
+    # Fetch clients associated with the items given by the user
+    clients = Client.objects.filter(items__in=items_given).distinct()
+    # Calculate the unpaid amount for each client
+    for client in clients:
+        items = Item.objects.filter(client=client)
+
+        # Calculate the total of unpaid items for the client
+        unpaid_items_total = items.filter(is_item_paid=False).aggregate(
+            total=Coalesce(Sum('item_total_amount', output_field=DecimalField()), Decimal('0'))
+        )['total']
+
+        # Assign the calculated unpaid_items_total directly to the client instance
+        client.unpaid_items_total = unpaid_items_total if unpaid_items_total is not None else Decimal('0')
     total_items_given = sum(item.item_total_amount for item in items_given)
     total_paid_items = items_given.filter(is_item_paid=True)
     total_paid_amount = sum(item.item_total_amount for item in total_paid_items)
@@ -422,6 +435,8 @@ def user_detail(request, id):
         'total_paid_amount': intcomma(total_paid_amount),
         'total_unpaid_amount': intcomma(total_unpaid_amount),
         'items_given_monthly': items_given_monthly,
+        'clients': clients,
+        'unpaid_items_total': unpaid_items_total,
         # Add other variables you want to display in the template
     }
     return render(request, 'user_detail.html', context)

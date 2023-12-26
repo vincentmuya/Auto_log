@@ -32,7 +32,7 @@
     <div class="row">
       <div class="col-md-6">
         <div class="credentials">
-        <h3 class="titlebold"><strong>Name:{{ user_info.username }}</strong> </h3>
+        <h3 class="titlebold"><strong>Name:{{ user_info.username|capfirst }}</strong> </h3>
         <h3 class="titlebold"><strong>Items Given:KSH {{ total_items_given }}/= </strong></h3>
 
       </div>
@@ -45,7 +45,35 @@
       </div>
     </div>
     </div>
+                <div id="card-title">
+          <h2>Clients By {{ user_info.username|capfirst }} </h2>
+            <div class="underline-title"></div>
+      </div>
     <br>
+        <table id="clients">
+    <tr>
+        <th>Name</th>
+        <th>Phone Number</th>
+        <th>ID</th>
+        <th>Unpaid Amount</th>
+    </tr>
+{% for client in clients %}
+    <tr>
+        <td><a href="{{ client.get_absolute_url }}">{{ client.name }}</a></td>
+        <td>{{ client.phone_number }}</td>
+        <td>{{ client.id_number }}</td>
+        <td>{{ client.unpaid_items_total|intcomma }}</td>
+    </tr>
+{% endfor %}
+
+    <tr>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+    </tr>
+</table>
+      <br>
     <h4>Items History Monthly</h4>
     <table id="customers">
     {% for entry in items_given_monthly %}
@@ -54,7 +82,7 @@
         </tr>
         {% endfor %}
     </table>
-    <br>
+
   </div>
 </div>
   <div class="col-md-1">
