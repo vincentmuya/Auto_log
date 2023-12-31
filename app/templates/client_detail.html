@@ -59,11 +59,11 @@
                     <a href="{% url 'mark_all_items_paid' client.slug %}">
                       <button type="button" class="btn btn-warning" name="button">Paid All</button>
                     </a>
+                    <button type="button" class="btn btn-danger" name="button" onclick="confirmDeleteClient('{{ client.slug }}')">Delete {{ client.name|capfirst }}</button>
+
                   </td>
                 {% endif %}
-                <td>
-                  <button type="button" class="btn btn-danger" name="button" onclick="confirmDeleteClient('{{ client.slug }}')">Delete Client</button>
-                </td>
+
               </tr>
             </table>
             <hr>
