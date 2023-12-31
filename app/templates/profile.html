@@ -16,10 +16,29 @@
         <h2>Logged In As {{user_profile.user}}</h2>
         <div class="underline-title"></div>
         <br>
-          <h4>{{user_profile.user|capfirst}} Profile, Client's Given</h4>
-        <div class="underline-title"></div>
+<!--          <h4>{{user_profile.user|capfirst}}'s Profile</h4>-->
+<!--        <div class="underline-title"></div>-->
         </div>
+            <br>
+            <div class="row">
+      <div class="col-md-6">
+        <div class="credentials">
+        <h3 class="titlebold"><strong>Name:{{ user_profile.user|capfirst }}</strong> </h3>
+        <h3 class="titlebold"><strong>Items Given:KSH {{ total_items_given }}/= </strong></h3>
 
+      </div>
+      </div>
+
+    <div class="col-md-6">
+      <div class="credentials">
+        <h3 class="titlebold"><strong>Items Paid:KSH {{ total_paid_amount }}/= </strong></h3>
+        <h3 class="titlebold"><strong>Items Unpaid:KSH {{ total_unpaid_amount }}/= </strong></h3>
+      </div>
+    </div>
+    </div>
+            <br>
+<h2> Client's Given</h2>
+        <div class="underline-title"></div>
             <div class="row">
     <div class="col-md-1">
     </div>

@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from .models import Client, ItemHistory, Profile, User, Item
 from django.contrib.humanize.templatetags.humanize import intcomma
 from datetime import datetime
-from django.db.models import Count, Sum, F, DecimalField
+from django.db.models import Count, Sum, F, DecimalField, Value
 from django.db.models.functions import TruncMonth
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
@@ -269,11 +269,22 @@ def profile(request, username):
     lender_clients = Client.objects.filter(items__lender=request.user).distinct()
 
     # Fetch items associated with the current user as a lender and include related client information
-    lender_list = Item.objects.filter(lender=request.user).select_related('client').order_by('item_collection_date')[::-1]
+    lender_list = Item.objects.filter(lender=request.user).select_related('client').order_by('item_collection_date')[
+                  ::-1]
 
     # Format the item_amount fields with commas
     for item in lender_list:
         item.item_total_amount = intcomma(item.item_total_amount)
+
+    # Calculate the total items given, total paid amount, and total unpaid amount
+    total_items_given = sum(float(item.item_total_amount.replace(',', '')) for item in lender_list)
+
+    # Filter paid and unpaid items
+    total_paid_items = [item for item in lender_list if item.is_item_paid]
+    total_unpaid_items = [item for item in lender_list if not item.is_item_paid]
+
+    total_paid_amount = sum(float(item.item_total_amount.replace(',', '')) for item in total_paid_items)
+    total_unpaid_amount = sum(float(item.item_total_amount.replace(',', '')) for item in total_unpaid_items)
 
     # Initialize the unpaid_total_amount to Decimal('0')
     unpaid_total_amount = Decimal('0')
@@ -294,6 +305,9 @@ def profile(request, username):
         "lender_list": lender_list,
         "lender_clients": lender_clients,
         "unpaid_total_amount": unpaid_total_amount,
+        "total_items_given": intcomma(total_items_given),
+        "total_paid_amount": intcomma(total_paid_amount),
+        "total_unpaid_amount": intcomma(total_unpaid_amount),
     })
 
 

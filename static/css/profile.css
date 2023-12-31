@@ -33,6 +33,17 @@ color: white;
 h2, h4 {
     text-align: center;
 }
+.credentials{
+background-color: #f2f2f2;
+border-radius: 10px;
+box-shadow: 2px 2px 2px 2px;
+width: 60%;
+padding: 10px;
+}
+.titlebold{
+font-weight: 0;
+font-size: 18px;
+}
 @media screen and (max-width: 650px) {
 h2{
 font-size:20px
@@ -54,5 +65,12 @@ font-size:12px;
 }
 button{
 font-size:10px;
+}
+.credentials{
+  margin-bottom: 15px;
+}
+.titlebold{
+  font-weight: 900;
+  font-size: 15px;
 }
 }
