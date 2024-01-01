@@ -267,7 +267,7 @@ def profile(request, username):
 
     # Fetch clients associated with the current user as a lender
     lender_clients = Client.objects.filter(items__lender=request.user).distinct()
-
+    items_given = Item.objects.filter(lender=request.user)
     # Fetch items associated with the current user as a lender and include related client information
     lender_list = Item.objects.filter(lender=request.user).select_related('client').order_by('item_collection_date')[
                   ::-1]
@@ -300,6 +300,17 @@ def profile(request, username):
         # Accumulate the unpaid_items_total directly
         unpaid_total_amount += unpaid_items_total
 
+        # Annotate items with year and month information
+        items_given = items_given.annotate(
+            year_month=TruncMonth('item_collection_date')
+        )
+
+        # Calculate the count of items given per month
+        items_given_monthly = items_given.values('year_month').annotate(count=Count('id'),
+                                                                        amount=Sum('item_total_amount'),
+                                                                        unpaid=Sum('item_total_amount',
+                                                                                   filter=F('is_item_paid') == False))
+
     return render(request, "profile.html", {
         "user_profile": user_profile,
         "lender_list": lender_list,
@@ -308,6 +319,7 @@ def profile(request, username):
         "total_items_given": intcomma(total_items_given),
         "total_paid_amount": intcomma(total_paid_amount),
         "total_unpaid_amount": intcomma(total_unpaid_amount),
+        'items_given_monthly': items_given_monthly,
     })
 
 

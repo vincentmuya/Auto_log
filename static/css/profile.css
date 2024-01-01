@@ -44,6 +44,33 @@ padding: 10px;
 font-weight: 0;
 font-size: 18px;
 }
+#customers {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#customers td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  width: 110px;
+  font-size: 15px
+}
+
+#customers tr:nth-child(even){background-color: #f2f2f2;}
+
+#customers tr:hover {background-color: #ddd;}
+#customers th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
+#clients td, #customers th {
+border: 1px solid #ddd;
+padding: 8px;
+}
 @media screen and (max-width: 650px) {
 h2{
 font-size:20px
@@ -72,5 +99,8 @@ font-size:10px;
 .titlebold{
   font-weight: 900;
   font-size: 15px;
+}
+#customers{
+  width: 300px;
 }
 }
