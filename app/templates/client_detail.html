@@ -24,19 +24,24 @@
           <div class="track-card">
             <br>
             <div class="row">
-              <div class="col-md-4">
+              <div class="col-md-3">
                 <div class="credentials">
                   <h3 class="titlebold"><strong>Name: {{ client.name|capfirst }}</strong></h3>
                 </div>
               </div>
-              <div class="col-md-4">
+              <div class="col-md-3">
                 <div class="credentials">
                   <h3 class="titlebold"><strong>Phone Number: {{ client.phone_number }}</strong></h3>
                 </div>
               </div>
-              <div class="col-md-4">
+              <div class="col-md-3">
                 <div class="credentials">
                   <h3 class="titlebold"><strong>ID Number: {{ client.id_number }}</strong></h3>
+                </div>
+              </div>
+                <div class="col-md-3">
+                <div class="credentials">
+                    <button type="button" class="btn btn-danger" name="button" onclick="confirmDeleteClient('{{ client.slug }}')">Delete {{ client.name|capfirst }}</button>
                 </div>
               </div>
             </div>
@@ -59,7 +64,6 @@
                     <a href="{% url 'mark_all_items_paid' client.slug %}">
                       <button type="button" class="btn btn-warning" name="button">Paid All</button>
                     </a>
-                    <button type="button" class="btn btn-danger" name="button" onclick="confirmDeleteClient('{{ client.slug }}')">Delete {{ client.name|capfirst }}</button>
 
                   </td>
                 {% endif %}

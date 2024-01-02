@@ -2,7 +2,7 @@
 background: -webkit-linear-gradient(right, #a6f77b, #2ec06f);
 height: 2px;
 margin: -1.1rem auto 0 auto;
-width: 400px;
+width: 300px;
 }
 th{
 padding:10px;
@@ -33,16 +33,17 @@ color: white;
 h2, h4 {
     text-align: center;
 }
-.credentials{
-background-color: #f2f2f2;
-border-radius: 10px;
-box-shadow: 2px 2px 2px 2px;
-width: 60%;
-padding: 10px;
+.credentials {
+    background-color: #f2f2f2;
+    border-radius: 10px;
+    box-shadow: 2px 2px 2px 2px;
+    width: 100%;
+    text-align: center;
+    padding: 10px;
 }
 .titlebold{
 font-weight: 0;
-font-size: 18px;
+font-size: 15px;
 }
 #customers {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
@@ -85,7 +86,7 @@ font-size:17px
 background: -webkit-linear-gradient(right, #a6f77b, #2ec06f);
 height: 2px;
 margin: -0.9rem auto 0 auto;
-width: 250px;
+width: 200px;
 }
 th, td{
 font-size:12px;

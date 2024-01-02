@@ -1,4 +1,6 @@
-
+.space1 {
+  padding: 10px;
+}
 .space{
 padding:10px;
 }
@@ -20,5 +22,14 @@ text-align:center;
 @media screen and (max-width:650px){
 h1{
 font-size:28px;
+}
+.space1{
+padding:0px;
+}
+.underline-title {
+    background: -webkit-linear-gradient(right, #a6f77b, #2ec06f);
+    height: 2px;
+    margin: -1.1rem auto 0 auto;
+    width: 220px;
 }
 }

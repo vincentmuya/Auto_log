@@ -1,10 +1,10 @@
 #card {
-  background: #fbfbfb;
-  border-radius: 8px;
-  box-shadow: 1px 2px 8px rgba(0, 0, 0, 0.65);
-  height: 1000px;
-  margin: 6rem auto 8.1rem auto;
-  width: 500px;
+    background: #fbfbfb;
+    border-radius: 8px;
+    box-shadow: 1px 2px 8px rgba(0, 0, 0, 0.65);
+    height: 700px;
+    margin: 10px auto 8.1rem auto;
+    width: 500px;
 }
 #card-content {
   padding: 12px 44px;
@@ -57,11 +57,11 @@
 }
 @media screen and (max-width:650px){
 #card {
-background: #fbfbfb;
-border-radius: 8px;
-box-shadow: 1px 2px 8px rgba(0, 0, 0, 0.65);
-height: 1000px;
-margin: 6rem auto 8.1rem auto;
-width: 370px;
+    background: #fbfbfb;
+    border-radius: 8px;
+    box-shadow: 1px 2px 8px rgba(0, 0, 0, 0.65);
+    height: 700px;
+    margin: 10px auto 8.1rem auto;
+    width: 370px;
 }
 }
