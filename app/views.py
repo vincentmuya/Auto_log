@@ -494,3 +494,18 @@ def delete_client(request, slug):
 
     # Redirect to a success page or another appropriate view
     return redirect('/client_list')
+
+
+@login_required
+def delete_user(request, id):
+    user_info = get_object_or_404(User, id=id)
+
+    # Delete items given by the user
+    user_info.item_set.all().delete()
+
+    # Note: No need to delete clients related to the user in this case
+
+    # Delete the user
+    user_info.delete()
+
+    return redirect('/users')

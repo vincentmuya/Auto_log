@@ -45,6 +45,7 @@
       </div>
     </div>
     </div>
+<button id="delete-button-{{ user_info.id }}" type="button" class="btn btn-danger" name="button" onclick="confirmDeleteUser('{{ user_info.id }}')" data-delete-url="{% url 'delete_user' user_info.id %}">Delete {{ user_info.username|capfirst }}</button>
                 <div id="card-title">
           <h2>Clients By {{ user_info.username|capfirst }} </h2>
             <div class="underline-title"></div>
@@ -57,7 +58,7 @@
         <th>ID</th>
         <th>Unpaid Amount</th>
     </tr>
-{% for client in clients %}
+            {% for client in clients %}
     <tr>
         <td><a href="{{ client.get_absolute_url }}">{{ client.name }}</a></td>
         <td>{{ client.phone_number }}</td>
@@ -103,3 +104,18 @@
 </body>
 </html>
 {%endblock%}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+function confirmDeleteUser(userId) {
+    console.log("Function called with id:", userId);
+
+    if (confirm("Are you sure you want to delete this User? All Clients and Items Related To Client Will Be Deleted")) {
+        var deleteUrl = "/delete/user/" + userId + "/";
+        console.log("Generated URL:", deleteUrl);
+        window.location.href = deleteUrl;
+    }
+}
+</script>
+{% endblock %}

@@ -24,7 +24,7 @@ urlpatterns = [
     url('mark_all_items_paid/(?P<slug>[-\w]+)/$', views.mark_all_items_paid, name='mark_all_items_paid'),
     url(r'^delete/item/(?P<pk>\d+)/$', views.delete_item, name='delete_item'),
     url(r'^delete/client/(?P<slug>[-\w]+)/delete/$', views.delete_client, name='delete_client'),
-
+    url(r'^delete/user/(?P<id>\d+)/$', views.delete_user, name='delete_user'),
 ]
 
 if settings.DEBUG:
