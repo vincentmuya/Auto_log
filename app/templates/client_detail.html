@@ -89,7 +89,7 @@
                     </tr>
                     <tr>
                     <td><strong>Collection Date: {{ item.item_collection_date }}</strong><br></td>
-                      <td><strong>Lender: {{ item.lender }}</strong><br></td>
+                      <td><strong>Lender: <a href="{% url 'user_detail' id=item.lender_id %}">{{ item.lender|capfirst }}</a></strong><br></td>
                     </tr>
                     <tr>
                       <td><strong><a href="{% url 'update-item' item.pk %}"><button type="button" class="btn btn-success" name="button">Update</button></a></strong></td>
@@ -120,7 +120,7 @@
                     </tr>
                     <tr>
                     <td><strong>Collection Date: {{ item.item_collection_date }}</strong><br></td>
-                    <td><strong>Lender: {{ item.lender }}</strong><br></td>
+                    <td><strong>Lender:<a href="{% url 'user_detail' id=item.lender_id %}">{{ item.lender|capfirst }}</a></strong><br></td>
 
                     </tr>
                   </table>

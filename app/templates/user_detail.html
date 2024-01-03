@@ -45,6 +45,7 @@
       </div>
     </div>
     </div>
+      <br>
 <button id="delete-button-{{ user_info.id }}" type="button" class="btn btn-danger" name="button" onclick="confirmDeleteUser('{{ user_info.id }}')" data-delete-url="{% url 'delete_user' user_info.id %}">Delete {{ user_info.username|capfirst }}</button>
                 <div id="card-title">
           <h2>Clients By {{ user_info.username|capfirst }} </h2>
