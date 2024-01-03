@@ -1,3 +1,17 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+    <link rel="icon" href="/static/images/" type="image/gif" sizes="50x50">
+  <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Auto Log</title>
+</head>
+
+<body>
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="{%url 'index'%}">Mhenik Traders</a>
@@ -31,3 +45,20 @@
     </div>
   </div>
 </nav>
+
+<div id="menuToggle">
+    <input type="checkbox" />
+    <span></span>
+    <span></span>
+    <span></span>
+    <ul id="menu">
+      <a href="{%url 'index'%}"><li>Home</li></a>
+      <a href="{%url 'new_client'%}"><li>New Client</li></a>
+      <a href="{%url 'client_list'%}"><li>Client List</li></a>
+      <a href="{%url 'profile' user.username%}"><li>Profile</li></a>
+      <a href="/logout"><li>Log Out</li></a>
+    </ul>
+  </div>
+</body>
+</html>
+
