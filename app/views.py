@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from .models import Client, ItemHistory, Profile, User, Item
 from django.contrib.humanize.templatetags.humanize import intcomma
 from datetime import datetime
-from django.db.models import Count, Sum, F, DecimalField, Value
+from django.db.models import Count, Sum, F, DecimalField, Value, Case, When
 from django.db.models.functions import TruncMonth
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
@@ -308,10 +308,13 @@ def profile(request, username):
         )
 
         # Calculate the count of items given per month
-        items_given_monthly = items_given.values('year_month').annotate(count=Count('id'),
-                                                                        amount=Sum('item_total_amount'),
-                                                                        unpaid=Sum('item_total_amount',
-                                                                                   filter=F('is_item_paid') == False))
+        items_given_monthly = items_given.values('year_month').annotate(
+            count=Count('id'),
+            amount=Sum('item_total_amount'),
+            unpaid=Sum(
+                Case(When(is_item_paid=False, then='item_total_amount'), default=0, output_field=DecimalField())
+            )
+        )
 
     return render(request, "profile.html", {
         "user_profile": user_profile,
@@ -455,8 +458,13 @@ def user_detail(request, id):
     )
 
     # Calculate the count of items given per month
-    items_given_monthly = items_given.values('year_month').annotate(count=Count('id'), amount=Sum('item_total_amount'), unpaid=Sum('item_total_amount', filter=F('is_item_paid') == False))
-    # You can calculate other variables from the Client model here
+    items_given_monthly = items_given.values('year_month').annotate(
+        count=Count('id'),
+        amount=Sum('item_total_amount'),
+        unpaid=Sum(
+            Case(When(is_item_paid=False, then='item_total_amount'), default=0, output_field=DecimalField())
+        )
+    )    # You can calculate other variables from the Client model here
 
     context = {
         'user_info': user_info,
