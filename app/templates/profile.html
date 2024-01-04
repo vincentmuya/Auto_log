@@ -72,14 +72,20 @@
   </tr>
 </table>
         </div>
-    <h4>Items History Monthly</h4>
-    <table id="customers">
-    {% for entry in items_given_monthly %}
-    <tr>
-    <td><strong>Month:{{ entry.year_month|date:"F Y" }}: Number: {{ entry.count }}| Amount: KSH{{ entry.amount|intcomma }}/=|Unpaid: KSH{{ entry.unpaid|intcomma }}/= </strong><br></td>
-    </tr>
-    {% endfor %}
-    </table>
+<h4>Items History Monthly</h4>
+<table id="customers">
+    {% if items_given_monthly %}
+        {% for entry in items_given_monthly %}
+            <tr>
+                <td><strong>Month:{{ entry.year_month|date:"F Y" }}: Number: {{ entry.count }}| Amount: KSH{{ entry.amount|intcomma }}/=|Unpaid: KSH{{ entry.unpaid|intcomma }}/= </strong><br></td>
+            </tr>
+        {% endfor %}
+    {% else %}
+        <tr>
+            <td>No Items Given</td>
+        </tr>
+    {% endif %}
+</table>
         </div>
 </div>
 </div>

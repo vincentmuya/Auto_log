@@ -8,6 +8,11 @@
   border-color: rgba(255,255,255,.1);
   display: none;
 }
+.navbar-brand {
+    float: left;
+    text-align: center;
+    width: 100%;
+}
  #menuToggle {
     display: block;
     position: relative;

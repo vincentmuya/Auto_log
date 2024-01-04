@@ -46,7 +46,9 @@
     </div>
     </div>
       <br>
+      {% if user.is_authenticated and user.is_superuser %}
 <button id="delete-button-{{ user_info.id }}" type="button" class="btn btn-danger" name="button" onclick="confirmDeleteUser('{{ user_info.id }}')" data-delete-url="{% url 'delete_user' user_info.id %}">Delete {{ user_info.username|capfirst }}</button>
+     {% endif %}
                 <div id="card-title">
           <h2>Clients By {{ user_info.username|capfirst }} </h2>
             <div class="underline-title"></div>

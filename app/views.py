@@ -212,11 +212,13 @@ def search_results(request):
         search_term = request.GET.get("name")
         searched_clients = Client.objects.filter(Q(name__icontains=search_term) | Q(id_number__icontains=search_term))
 
+        unpaid_items_total = 0  # Initialize the variable before the loop
+
         for client in searched_clients:
             items = Item.objects.filter(client=client)
 
             # Calculate the total of unpaid items for the client
-            unpaid_items_total = items.filter(is_item_paid=False).aggregate(
+            unpaid_items_total += items.filter(is_item_paid=False).aggregate(
                 total=Coalesce(Sum('item_total_amount', output_field=DecimalField()), Decimal('0')))['total']
 
         message = f"{search_term}"
@@ -288,7 +290,7 @@ def profile(request, username):
 
     # Initialize the unpaid_total_amount to Decimal('0')
     unpaid_total_amount = Decimal('0')
-
+    items_given_monthly = 0
     # Fetch unpaid items for each client and calculate the total
     for client in lender_clients:
         items_for_client = Item.objects.filter(lender=request.user, client=client, is_item_paid=False)
@@ -429,6 +431,7 @@ def user_detail(request, id):
     items_given = Item.objects.filter(lender=user_info)
     # Fetch clients associated with the items given by the user
     clients = Client.objects.filter(items__in=items_given).distinct()
+    unpaid_items_total = 0
     # Calculate the unpaid amount for each client
     for client in clients:
         items = Item.objects.filter(client=client)
